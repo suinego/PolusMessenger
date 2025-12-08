@@ -1,0 +1,22 @@
+<resources>
+    <!-- Основные цвета -->
+    <color name="primary">#FF8B6B5A</color>      <!-- Тёплый бежево-коричневый -->
+    <color name="primary_dark">#FF6F5243</color>  <!-- Более тёмный оттенок -->
+    <color name="accent">#FFA78E7D</color>        <!-- Светлый бежевый акцент -->
+
+    <!-- Фоны -->
+    <color name="surface">#FFFDF8F3</color>       <!-- Основной бежевый фон -->
+    <color name="surface_light">#FFFFFBF7</color> <!-- Светлый фон для карточек -->
+    <color name="background">#FFF5EDE4</color>    <!-- Общий фон приложения -->
+
+    <!-- Текст -->
+    <color name="text_primary">#FF3E2723</color>  <!-- Тёмно-коричневый текст -->
+    <color name="text_secondary">#FF7A665C</color><!-- Средний коричневый -->
+    <color name="text_hint">#FFB8A69C</color>     <!-- Светлый бежевый для подсказок -->
+
+    <!-- Пузыри сообщений -->
+    <color name="bubble_me">#FF8B6B5A</color>    <!-- Ваши сообщения -->
+    <color name="bubble_contact">#FFEDE0D4</color><!-- Сообщения контакта -->
+    <color name="text_me">#FFFFFFFF</color>       <!-- Текст ваших сообщений -->
+    <color name="text_contact">#FF3E2723</color> <!-- Текст контакта -->
+</resources>
