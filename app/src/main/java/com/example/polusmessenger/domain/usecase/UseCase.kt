@@ -8,9 +8,10 @@ class GetChatsUseCase(private val repo: ChatRepository) {
 }
 
 class CreateChatUseCase(private val repo: ChatRepository) {
-    suspend operator fun invoke(name: String): List<Chat> = repo.createChat(name)
-}
+    suspend operator fun invoke(name: String): Chat = repo.createNewChat(name)
+    suspend fun createNewChat(name: String): Chat = repo.createNewChat(name)
 
+}
 class GetMessagesUseCase(private val repo: ChatRepository) {
     suspend operator fun invoke(chatId: Int): Pair<Chat, List<Message>> = repo.getMessages(chatId)
 }

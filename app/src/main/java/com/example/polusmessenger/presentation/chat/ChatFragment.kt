@@ -2,57 +2,79 @@ package com.example.polusmessenger.presentation.chat
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.polusmessenger.R
 import com.example.polusmessenger.di.AppModule
 import com.example.polusmessenger.presentation.redux.AppAction
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import android.widget.EditText
-import android.widget.Button
-import android.widget.Toast
 
 class ChatFragment : Fragment(R.layout.fragment_chat) {
-    private val store = AppModule.store
-    private lateinit var messagesAdapter: MessagesAdapter
-    companion object {
-        private const val ARG_CHAT_ID = "chat_id"
 
-        fun newInstance(chatId: Int): ChatFragment {
-            val fragment = ChatFragment()
-            fragment.arguments = Bundle().apply {
-                putInt(ARG_CHAT_ID, chatId)
+    private val store = AppModule.store
+    private lateinit var adapter: MessagesAdapter
+    private lateinit var recycler: RecyclerView
+    private lateinit var edit: EditText
+    private lateinit var sendBtn: Button
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        recycler = view.findViewById(R.id.recyclerMessages)
+        edit = view.findViewById(R.id.editMessage)
+        sendBtn = view.findViewById(R.id.btnSend)
+
+        adapter = MessagesAdapter()
+        recycler.layoutManager = LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
+        recycler.adapter = adapter
+
+        setupClickListeners()
+        observeViewState()
+        loadMessagesForCurrentChat()
+    }
+
+    private fun setupClickListeners() {
+        sendBtn.setOnClickListener {
+            val chatId = store.getState().selectedChatId
+            val text = edit.text.toString().trim()
+
+            if (chatId != null && text.isNotBlank()) {
+                lifecycleScope.launch { store.dispatch(AppAction.SendMessage(chatId, text)) }
+                edit.setText("")
+            } else if (chatId == null) {
+                Toast.makeText(requireContext(), "Чат не выбран", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Введите сообщение", Toast.LENGTH_SHORT).show()
             }
-            return fragment
         }
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val chatIdFromArgs = arguments?.getInt(ARG_CHAT_ID)
-        val recycler = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerMessages)
-        messagesAdapter = MessagesAdapter()
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = messagesAdapter
 
-        val edit = view.findViewById<EditText>(R.id.editMessage)
-        val sendBtn = view.findViewById<Button>(R.id.btnSend)
-        sendBtn.setOnClickListener {
-            val text = edit.text.toString()
-            val chatId = store.getState().selectedChatId
-            if (chatId != null && text.isNotBlank()) {
-                store.dispatch(AppAction.SendMessage(chatId, text))
-                edit.setText("")
-            } else Toast.makeText(requireContext(), "Выберите чат и введите текст", Toast.LENGTH_SHORT).show()
-        }
-
-        lifecycleScope.launch {
-            store.state.collectLatest { state ->
-                val selected = state.selectedChatId
-                if (selected != null) {
-                    messagesAdapter.submitList(state.messages[selected] ?: emptyList())
-                } else messagesAdapter.submitList(emptyList())
+    private fun observeViewState() {
+        val mapper = ChatViewStateMapper(store)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mapper.viewStates().collectLatest { vs ->
+                    adapter.submitList(vs.messages.toList()) {
+                        if (vs.messages.isNotEmpty()) recycler.scrollToPosition(vs.messages.size - 1)
+                    }
+                    activity?.actionBar?.title = vs.chatName ?: "Чат"
+                }
             }
+        }
+    }
+
+    private fun loadMessagesForCurrentChat() {
+        val chatId = store.getState().selectedChatId
+        if (chatId != null) {
+            lifecycleScope.launch { store.dispatch(AppAction.LoadMessages(chatId)) }
         }
     }
 }

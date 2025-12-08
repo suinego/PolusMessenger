@@ -23,6 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.VisualizationActivity"
+            android:exported="false"
+            android:label="Визуализация взаимодействий"
+            android:theme="@style/Theme.PolusMessenger" />
     </application>
 
 </manifest>

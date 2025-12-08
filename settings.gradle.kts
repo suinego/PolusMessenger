@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PolusMessenger"
 include(":app")
- 
+include(":scanview")

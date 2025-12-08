@@ -26,8 +26,7 @@ class ChatListAdapter(private val onClick: (Chat) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+        holder.bind(getItem(position))
     }
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
@@ -35,8 +34,6 @@ class ChatListAdapter(private val onClick: (Chat) -> Unit) :
         init {
             view.setOnClickListener { getItem(bindingAdapterPosition)?.let(onClick) }
         }
-        fun bind(chat: Chat) {
-            tvName.text = chat.name
-        }
+        fun bind(chat: Chat) { tvName.text = chat.name }
     }
 }
