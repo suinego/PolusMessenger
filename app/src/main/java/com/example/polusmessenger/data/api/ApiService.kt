@@ -1,21 +1,25 @@
 package com.example.polusmessenger.data.api
 
+import com.example.polusmessenger.data.api.responce.ChatWithMessagesResponse
+import com.example.polusmessenger.data.api.responce.ChatsResponse
+import com.example.polusmessenger.data.api.responce.MessageResponse
+import com.example.polusmessenger.data.api.responce.SendMessageResponse
 import retrofit2.http.*
 
 interface ApiService {
 
-    @GET("mipt_network/chats")
+    @GET("chats")
     suspend fun getChats(): ChatsResponse
 
-    @GET("mipt_network/chat")
-    suspend fun getChat(@Query("id") id: Int): ChatWithMessagesDto
+    @GET("chat")
+    suspend fun getChat(@Query("id") id: Int): ChatWithMessagesResponse
 
-    @POST("mipt_network/msg")
+    @POST("msg")
     suspend fun postMessage(
         @Query("id") id: Int,
         @Query("text") text: String
-    ): List<MessageDto>
+    ): SendMessageResponse
 
-    @POST("mipt_network/create_chat")
-    suspend fun createChat(@Query("name") name: String): List<ChatDto>
+    @POST("create_chat")
+    suspend fun createChat(@Query("name") name: String): ChatsResponse
 }

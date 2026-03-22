@@ -12,32 +12,33 @@ class ChatRepository(private val api: ApiService) : ChatRepositoryInterface {
     override suspend fun getChats(): List<Chat> {
         val response = api.getChats()
         Log.d("ChatRepository", "загружено чатов: ${response.chats.size}")
+
         return response.chats.map { it.toDomain() }
     }
 
     override suspend fun getMessages(chatId: Int): Pair<Chat, List<Message>> {
         Log.d("ChatRepository", "вызов getChatика($chatId)")
         val response = api.getChat(chatId)
-        Log.d("ChatRepository", "загружено сообщений: ${response.messages.size} для чата ${response.name}")
+        Log.d("ChatRepository", "загружено сообщений: ${response.messages.size} для чата ${response.messages.size}")
+
         return response.toDomain()
     }
     override suspend fun sendMessage(chatId: Int, text: String): List<Message> {
         val resp = api.postMessage(chatId, text)
-        return resp.toDomainList()
+        return resp.messages.map { it.toDomain() }
     }
 
 
     override suspend fun createChat(name: String): List<Chat> {
         val response = api.createChat(name)
         Log.d("ChatRepository", "создан новый чат '$name'")
-        val (_, allChats) = response.toDomain()
-        return allChats
+        return response.chats.map { it.toDomain() }
     }
 
     suspend fun createNewChat(name: String): Chat {
         val response = api.createChat(name)
-        val (newChat, _) = response.toDomain()
+        val newChat = response.chats.last()
         Log.d("ChatRepository", "создан новый чат '${newChat.name}' с id=${newChat.id}")
-        return newChat
+        return newChat.toDomain()
     }
 }

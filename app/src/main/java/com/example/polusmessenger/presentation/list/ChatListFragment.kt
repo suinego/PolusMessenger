@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,16 +51,18 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         view.findViewById<View>(R.id.fabCreateChat).setOnClickListener { showCreateChatDialog() }
 
         observeViewState()
-        observeChatCreated()
+            observeChatCreated()
     }
 
     private fun observeViewState() {
-        val mapper = ChatListViewStateMapper(store)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mapper.viewStates().collectLatest { vs ->
-                    adapter.submitList(vs.chats.toList())
-                }
+                store.states
+                    .map { state -> state.chats }
+                    .distinctUntilChanged()
+                    .collect { chats ->
+                        adapter.submitList(chats)
+                    }
             }
         }
     }
@@ -71,10 +74,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                 store.states
                     .map { it.selectedChatId }
                     .distinctUntilChanged()
-                    .collect { selectedChatId ->
-                        if (selectedChatId != null) {
-                            createChatDialog?.dismiss()
-                            createChatDialog = null
+                    .collect { chatId ->
+                        if (chatId != null) {
+                            store.dispatch(AppAction.LoadMessages(chatId)) // при каждом выборе чата сообщения загрузятся
                         }
                     }
             }
@@ -105,7 +107,6 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                     return@setOnClickListener
                 }
                 lifecycleScope.launch { store.dispatch(AppAction.CreateChat(name)) }
-
                 createChatDialog?.dismiss()
                 createChatDialog = null
             }

@@ -4,6 +4,5 @@
 
     data class ChatWithMessagesResponse(
         @SerializedName("id") val id: Int,
-        @SerializedName("name") val name: String,
         @SerializedName("messages") val messages: List<MessageResponse>
     )

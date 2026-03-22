@@ -11,7 +11,6 @@ import com.example.polusmessenger.R
 import com.example.polusmessenger.domain.Message
 
 class MessagesAdapter : ListAdapter<Message, MessagesAdapter.VH>(DIFF) {
-
     companion object {
         val DIFF = object : DiffUtil.ItemCallback<Message>() {
             override fun areItemsTheSame(oldItem: Message, newItem: Message) = oldItem.id == newItem.id

@@ -12,28 +12,25 @@ abstract class BaseEpic : Epic {
         filterIsInstance<T>()
 }
 
-// Load chats
 class LoadChatsEpic(
     private val getChatsUseCase: suspend () -> List<Chat>
 ) : BaseEpic() {
+
     override fun act(actions: Flow<Action>): Flow<Action> =
         actions.ofType<AppAction.LoadChats>()
-            .onEach { Log.d("Epic", "Загрузка чатов получена") }
-            .flatMapConcat {
+            .flatMapLatest {
                 flow {
-                    try {
-                        val chats = getChatsUseCase()
-                        Log.d("Epic", "Загружено чатов: ${chats.size}")
-                        emit(AppAction.ChatsLoaded(chats))
-                    } catch (e: Exception) {
-                        Log.e("Epic", "Загрузка чатов провалена", e)
-                        emit(AppAction.LoadChatsFailed(e.message ?: "unknown"))
-                    }
+                    emit(getChatsUseCase())
                 }
+                    .map<List<Chat>, Action> { chats ->
+                        AppAction.ChatsLoaded(chats)
+                    }
+                    .catch { e ->
+                        emit(AppAction.LoadChatsFailed(e.message ?: "неизвестно"))
+                    }
             }
 }
 
-// Load messages
 class LoadMessagesEpic(
     private val getMessagesUseCase: suspend (Int) -> Pair<Chat, List<Message>>
 ) : BaseEpic() {
@@ -69,8 +66,7 @@ class SendMessageEpic(
                     val currentMessages = getState().messages[chatId] ?: emptyList()
                     val tempMessage = Message(
                         id = -(System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
-                        text = text,
-                        sender = "",
+                        text = text
                     )
 
                     val withTemp = currentMessages + tempMessage
@@ -85,7 +81,7 @@ class SendMessageEpic(
                         Log.e("SendMessageEpic", "отправка не отработала", e)
                         val withoutTemp = currentMessages
                         emit(AppAction.MessagesLoaded(chatId, withoutTemp))
-                        emit(AppAction.MessageSendFailed(e.localizedMessage ?: "Оотправка не отработала"))
+                        emit(AppAction.MessageSendFailed(e.localizedMessage ?: "Отправка не отработала"))
                     }
                 }
             }

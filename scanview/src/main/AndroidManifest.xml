@@ -7,6 +7,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PolusMessenger" />
+        android:theme="@style/Theme.PolusMessenger">
+        
+        <activity
+            android:name="com.example.scanview.ui.ScanViewResultsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PolusMessenger" />
+    </application>
 
 </manifest>

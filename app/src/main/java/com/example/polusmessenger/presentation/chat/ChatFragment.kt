@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,13 +26,12 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private lateinit var edit: EditText
     private lateinit var sendBtn: Button
 
+    //вызываем после onCreateView!
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         recycler = view.findViewById(R.id.recyclerMessages)
         edit = view.findViewById(R.id.editMessage)
         sendBtn = view.findViewById(R.id.btnSend)
-
         adapter = MessagesAdapter()
         recycler.layoutManager = LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
         recycler.adapter = adapter
@@ -45,7 +45,6 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
         sendBtn.setOnClickListener {
             val chatId = store.getState().selectedChatId
             val text = edit.text.toString().trim()
-
             if (chatId != null && text.isNotBlank()) {
                 lifecycleScope.launch { store.dispatch(AppAction.SendMessage(chatId, text)) }
                 edit.setText("")
@@ -58,17 +57,21 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     }
 
     private fun observeViewState() {
-        val mapper = ChatViewStateMapper(store)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mapper.viewStates().collectLatest { vs ->
-                    adapter.submitList(vs.messages.toList()) {
-                        if (vs.messages.isNotEmpty()) recycler.scrollToPosition(vs.messages.size - 1)
+        viewLifecycleOwner.lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.CREATED){  //когда достиг состояния created
+                store.states.collect {
+                    state ->
+                    val chatId = state.selectedChatId
+                    val chat = state.chats.find {it.id == chatId}
+                    val msg = state.messages[chatId].orEmpty()
+                    adapter.submitList(msg)
+                    if(msg.isNotEmpty()){
+                        recycler.scrollToPosition(msg.size - 1)
                     }
-                    activity?.actionBar?.title = vs.chatName ?: "Чат"
                 }
             }
         }
+
     }
 
     private fun loadMessagesForCurrentChat() {

@@ -7,6 +7,7 @@ data class MessageResponse(
     @SerializedName("text") val text: String
 )
 
-data class MessagesResponse(
-    val messages: List<MessageResponse> = emptyList()
+data class SendMessageResponse(
+    val id: Int,
+    val messages: List<MessageResponse>
 )

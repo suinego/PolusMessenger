@@ -4,9 +4,9 @@ import android.util.Log
 import com.example.polusmessenger.domain.Chat
 import com.example.polusmessenger.domain.Message
 
+//как меняется состояние нашего приложения при действиях пользователя
 fun appReducer(state: AppState, action: Action): AppState {
     val a = action as? AppAction ?: return state
-
     return state.copy(
         chats = reduceChats(state.chats, a),
         messages = reduceMessages(state.messages, a),
@@ -17,8 +17,8 @@ fun appReducer(state: AppState, action: Action): AppState {
 }
 private fun reduceChats(chats: List<Chat>, action: AppAction): List<Chat> = when (action) {
     is AppAction.ChatsLoaded -> action.chats
-    is AppAction.ChatCreated -> chats + action.chat
-    else -> chats
+    is AppAction.ChatCreated -> chats + action.chat // хотим иммутабельно вернуть новый state
+    else -> chats // иначе возвращаем старый state
 }
 
 private fun reduceMessages(

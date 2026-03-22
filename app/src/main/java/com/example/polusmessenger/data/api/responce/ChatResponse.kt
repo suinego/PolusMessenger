@@ -6,6 +6,7 @@ data class ChatResponse(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String
 )
-data class ChatsResponseDto(
+
+data class ChatsResponse(
     val chats: List<ChatResponse>
 )

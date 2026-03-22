@@ -8,10 +8,9 @@ import com.example.polusmessenger.domain.Message
 interface Action
 
 sealed class AppAction : Action {
-    object LoadChats : AppAction()
+    object LoadChats : AppAction() //не несет за собой никаких данных просто загружаем
     data class ChatsLoaded(val chats: List<Chat>) : AppAction()
     data class LoadChatsFailed(val error: String) : AppAction()
-
     data class SelectChat(val chatId: Int) : AppAction()
     data class LoadMessages(val chatId: Int) : AppAction()
     data class MessagesLoaded(val chatId: Int, val messages: List<Message>) : AppAction()
