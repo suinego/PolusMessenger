@@ -4,6 +4,7 @@ package com.example.polusmessenger.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,11 +21,24 @@ public final class ItemChatBinding implements ViewBinding {
   private final CardView rootView;
 
   @NonNull
+  public final ImageView chatAvatar;
+
+  @NonNull
+  public final View chatDot;
+
+  @NonNull
   public final TextView chatName;
 
-  private ItemChatBinding(@NonNull CardView rootView, @NonNull TextView chatName) {
+  @NonNull
+  public final TextView chatSubtitle;
+
+  private ItemChatBinding(@NonNull CardView rootView, @NonNull ImageView chatAvatar,
+      @NonNull View chatDot, @NonNull TextView chatName, @NonNull TextView chatSubtitle) {
     this.rootView = rootView;
+    this.chatAvatar = chatAvatar;
+    this.chatDot = chatDot;
     this.chatName = chatName;
+    this.chatSubtitle = chatSubtitle;
   }
 
   @Override
@@ -54,13 +68,31 @@ public final class ItemChatBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.chatAvatar;
+      ImageView chatAvatar = ViewBindings.findChildViewById(rootView, id);
+      if (chatAvatar == null) {
+        break missingId;
+      }
+
+      id = R.id.chatDot;
+      View chatDot = ViewBindings.findChildViewById(rootView, id);
+      if (chatDot == null) {
+        break missingId;
+      }
+
       id = R.id.chatName;
       TextView chatName = ViewBindings.findChildViewById(rootView, id);
       if (chatName == null) {
         break missingId;
       }
 
-      return new ItemChatBinding((CardView) rootView, chatName);
+      id = R.id.chatSubtitle;
+      TextView chatSubtitle = ViewBindings.findChildViewById(rootView, id);
+      if (chatSubtitle == null) {
+        break missingId;
+      }
+
+      return new ItemChatBinding((CardView) rootView, chatAvatar, chatDot, chatName, chatSubtitle);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

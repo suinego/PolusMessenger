@@ -4,195 +4,193 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import com.example.scanview.data.*
 
-
-data class VisualizationConfig(
-    val viewBoundsColor: Int = Color.parseColor("#00BFFF"),
-    val viewBoundsAlpha: Int = 150,
-    val viewBoundsStrokeWidth: Float = 10f,
-    val tapStartColor: Int = Color.parseColor("#00FF00"),
-    val tapEndColor: Int = Color.parseColor("#FF0000"),
-    val tapIntermediateColor: Int = Color.parseColor("#FFFF00"),
-    val tapPointRadius: Float = 20f,
-    val showIntermediatePoints: Boolean = true,
-    val swipeLineColor: Int = Color.parseColor("#FF6B6B"),
-    val swipeLineWidth: Float = 4f,
-    val arrowLength: Float = 20f,
-    val showLabels: Boolean = true,
-    val textSize: Float = 24f,
-    val textColor: Int = Color.WHITE,
-    val labelBackgroundColor: Int = Color.parseColor("#80000000"),
-    val labelPadding: Int = 8
-)
-
+/**
+ * Пошаговая визуализация — один шаг на экране, без наложений.
+ * progress (0..1) → индекс взаимодействия.
+ */
 class ScanViewDrawable(
     private val interactions: List<InteractionRecord>,
     private val config: VisualizationConfig = VisualizationConfig()
 ) : Drawable() {
+
     private var progress: Float = 0f
-
-    private val minTime: Long
-    private val maxTime: Long
-    private val totalDuration: Long
-
-    init {
-        val allTimestamps = interactions.flatMap { record ->
-            buildList {
-                add(record.gesture.startEvent.timestamp)
-                addAll(record.gesture.posledovatelnostMoveEvent.map { it.timestamp })
-                record.gesture.endEvent?.let { add(it.timestamp) }
-            }
-        }
-        minTime = allTimestamps.minOrNull() ?: 0L
-        maxTime = allTimestamps.maxOrNull() ?: 0L
-        totalDuration = maxTime - minTime
-    }
 
     fun setProgress(value: Float) {
         progress = value.coerceIn(0f, 1f)
         invalidateSelf()
     }
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private fun currentIndex() =
+        if (interactions.isEmpty()) 0
+        else (progress * (interactions.lastIndex)).toInt().coerceIn(0, interactions.lastIndex)
+
+    // ── Paints ────────────────────────────────────────────────────────────────
+
+    private val p = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    // ── Цвета по типу жеста ───────────────────────────────────────────────────
+
+    private fun gestureColor(type: GestureType): Int = when (type) {
+        GestureType.TAP        -> 0xFF00E676.toInt()  // яркий зелёный
+        GestureType.SWIPE      -> 0xFFFF6D00.toInt()  // оранжевый
+        GestureType.LONG_PRESS -> 0xFFD500F5.toInt()  // фиолетовый
+        GestureType.MOVE       -> 0xFF00B0FF.toInt()  // голубой
+    }
+
+    // ── Главный draw ──────────────────────────────────────────────────────────
+
     override fun draw(canvas: Canvas) {
         if (interactions.isEmpty()) return
+        val idx = currentIndex()
+        val record = interactions[idx]
+        val color = gestureColor(record.gesture.type)
 
-        val currentTime = if (totalDuration > 0L) {
-            minTime + (progress * totalDuration).toLong()
-        } else {
-            if (progress >= 1f) maxTime else minTime - 1L
+        // 1. ViewNode / bounds
+        record.viewInfo.viewNode?.let { ViewNodeRenderer.draw(canvas, it, color) }
+            ?: record.viewInfo.bounds?.let { drawBoundsRect(canvas, it, color) }
+
+        // 2. Жест
+        when (record.gesture.type) {
+            GestureType.SWIPE -> drawSwipeTrail(canvas, record.gesture, color)
+            GestureType.LONG_PRESS -> drawLongPressRings(canvas, record.gesture.startEvent, color)
+            else -> Unit
         }
 
-        interactions.forEachIndexed { index, record ->
-            if (record.gesture.startEvent.timestamp <= currentTime) {
-                drawInteractionAtTime(canvas, record, index, currentTime)
-            }
+        // 3. Точка касания
+        val tx = record.gesture.startEvent.x
+        val ty = record.gesture.startEvent.y
+        drawRippleTouchPoint(canvas, tx, ty, color)
+
+        // Прогресс и панель рисуются в ScanViewVisualizationView вне трансформа
+    }
+
+    // ── Bounds fallback ───────────────────────────────────────────────────────
+
+    private fun drawBoundsRect(canvas: Canvas, bounds: Rect, color: Int) {
+        val rect = RectF(bounds)
+        val r = Color.red(color); val g = Color.green(color); val b = Color.blue(color)
+        p.color = Color.argb(30, r, g, b)
+        p.style = Paint.Style.FILL
+        p.pathEffect = null
+        canvas.drawRoundRect(rect, 12f, 12f, p)
+        p.color = Color.argb(180, r, g, b)
+        p.style = Paint.Style.STROKE
+        p.strokeWidth = 3f
+        canvas.drawRoundRect(rect, 12f, 12f, p)
+    }
+
+    // ── Ripple touch point ────────────────────────────────────────────────────
+
+    private fun drawRippleTouchPoint(canvas: Canvas, x: Float, y: Float, color: Int) {
+        val r = Color.red(color); val g = Color.green(color); val b = Color.blue(color)
+        val radius = config.tapPointRadius
+        p.style = Paint.Style.FILL
+        p.pathEffect = null
+        p.shader = null
+
+        // Ripple кольца (3 затухающих)
+        for (i in 3 downTo 1) {
+            p.color = Color.argb(18 * i, r, g, b)
+            canvas.drawCircle(x, y, radius * (1f + i * 0.9f), p)
         }
+        // Белое кольцо
+        p.color = Color.argb(200, 255, 255, 255)
+        p.style = Paint.Style.STROKE
+        p.strokeWidth = 3f
+        canvas.drawCircle(x, y, radius + 3f, p)
+        // Цветной центр
+        p.color = color
+        p.style = Paint.Style.FILL
+        canvas.drawCircle(x, y, radius, p)
+        // Белый центральный блик
+        p.color = Color.argb(180, 255, 255, 255)
+        canvas.drawCircle(x, y, radius * 0.28f, p)
     }
 
-    private fun drawInteractionAtTime(canvas: Canvas, record: InteractionRecord, index: Int, currentTime: Long) {
-        val viewInfo = record.viewInfo
-        val gesture = record.gesture
+    // ── Swipe trail — градиентные нарастающие точки ───────────────────────────
 
-        viewInfo.bounds?.let { drawViewBounds(canvas, it, viewInfo, index) }
+    private fun drawSwipeTrail(canvas: Canvas, gesture: Gesture, color: Int) {
+        val start = gesture.startEvent
+        val end = gesture.endEvent ?: return
+        val r = Color.red(color); val g = Color.green(color); val b = Color.blue(color)
+        val steps = 20
 
-        drawTouchPoint(canvas, gesture.startEvent, config.tapStartColor, config.tapPointRadius)
+        p.style = Paint.Style.FILL
+        p.shader = null
+        p.pathEffect = null
 
-        if (config.showIntermediatePoints) {
-            gesture.posledovatelnostMoveEvent
-                .filter { it.timestamp <= currentTime }
-                .forEach { event ->
-                    drawTouchPoint(canvas, event, config.tapIntermediateColor, config.tapPointRadius * 0.6f)
-                }
+        for (i in 0..steps) {
+            val t = i.toFloat() / steps
+            val x = start.x + (end.x - start.x) * t
+            val y = start.y + (end.y - start.y) * t
+            val dotR = 3f + t * 10f        // растёт 3→13px (направление движения)
+            val alpha = (40 + t * 215).toInt() // темнеет 40→255
+            p.color = Color.argb(alpha, r, g, b)
+            canvas.drawCircle(x, y, dotR, p)
         }
 
-        gesture.endEvent?.let { endEvent ->
-            if (endEvent.timestamp <= currentTime) {
-                drawTouchPoint(canvas, endEvent, config.tapEndColor, config.tapPointRadius)
-                if (gesture.type == GestureType.SWIPE) drawSwipeLine(canvas, gesture)
-            }
-        }
-    }
-    private fun drawViewBounds(canvas: Canvas, bounds: Rect, @Suppress("UNUSED_PARAMETER") viewInfo: ViewInfo, @Suppress("UNUSED_PARAMETER") index: Int) {
-        val rectF = RectF(bounds)
+        // Стрелка на конце
+        drawArrowHead(canvas, start, end, color)
 
-        paint.color = config.viewBoundsColor
-        paint.style = Paint.Style.FILL
-        paint.alpha = config.viewBoundsAlpha
-        canvas.drawRect(rectF, paint)
-
-        paint.color = Color.MAGENTA
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 6f
-        paint.alpha = 255
-        canvas.drawRect(rectF, paint)
+        // Точка конца (менее яркая)
+        p.color = Color.argb(160, 255, 255, 255)
+        p.style = Paint.Style.STROKE
+        p.strokeWidth = 2f
+        canvas.drawCircle(end.x, end.y, config.tapPointRadius * 0.7f + 2f, p)
     }
 
-    private fun drawTouchPoint(
-        canvas: Canvas,
-        event: TouchEvent,
-        color: Int,
-        radius: Float
-    ) {
-        val x = event.x
-        val y = event.y
+    private fun drawArrowHead(canvas: Canvas, start: TouchEvent, end: TouchEvent, color: Int) {
+        val angle = kotlin.math.atan2((end.y - start.y).toDouble(), (end.x - start.x).toDouble())
+        val spread = kotlin.math.PI / 5.5
+        val len = config.arrowLength * 1.4f
+        val r = Color.red(color); val g = Color.green(color); val b = Color.blue(color)
 
-        paint.color = Color.WHITE
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 4f
-        canvas.drawCircle(x, y, radius + 4, paint)
-
-        paint.color = color
-        paint.style = Paint.Style.FILL
-        canvas.drawCircle(x, y, radius, paint)
-
-    }
-
-    private fun drawSwipeLine(canvas: Canvas, gesture: Gesture) {
-        val endEvent = gesture.endEvent ?: return
-        paint.color = config.swipeLineColor
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = config.swipeLineWidth
-        paint.strokeCap = Paint.Cap.ROUND
-        paint.pathEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f)
+        p.color = Color.argb(230, r, g, b)
+        p.style = Paint.Style.STROKE
+        p.strokeWidth = config.swipeLineWidth
+        p.strokeCap = Paint.Cap.ROUND
+        p.shader = null; p.pathEffect = null
 
         canvas.drawLine(
-            gesture.startEvent.x,
-            gesture.startEvent.y,
-            endEvent.x,
-            endEvent.y,
-            paint
+            end.x, end.y,
+            (end.x - len * kotlin.math.cos(angle - spread)).toFloat(),
+            (end.y - len * kotlin.math.sin(angle - spread)).toFloat(), p
         )
-
-        drawArrow(canvas, gesture.startEvent, endEvent)
-    }
-
-    private fun drawArrow(canvas: Canvas, start: TouchEvent, end: TouchEvent) {
-        val angle = kotlin.math.atan2(
-            end.y - start.y,
-            end.x - start.x
+        canvas.drawLine(
+            end.x, end.y,
+            (end.x - len * kotlin.math.cos(angle + spread)).toFloat(),
+            (end.y - len * kotlin.math.sin(angle + spread)).toFloat(), p
         )
-
-        val arrowLength = config.arrowLength
-        val arrowAngle = kotlin.math.PI / 6
-
-        val x1 = end.x - arrowLength * kotlin.math.cos(angle - arrowAngle)
-        val y1 = end.y - arrowLength * kotlin.math.sin(angle - arrowAngle)
-        val x2 = end.x - arrowLength * kotlin.math.cos(angle + arrowAngle)
-        val y2 = end.y - arrowLength * kotlin.math.sin(angle + arrowAngle)
-
-        paint.color = config.swipeLineColor
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = config.swipeLineWidth
-        paint.strokeCap = Paint.Cap.ROUND
-
-        canvas.drawLine(end.x, end.y, x1.toFloat(), y1.toFloat(), paint)
-        canvas.drawLine(end.x, end.y, x2.toFloat(), y2.toFloat(), paint)
     }
 
-    override fun setAlpha(alpha: Int) {
-        paint.alpha = alpha
-        invalidateSelf()
-    }
+    // ── Long press — пульсирующие кольца ─────────────────────────────────────
 
-    override fun setColorFilter(colorFilter: ColorFilter?) {
-        paint.colorFilter = colorFilter
-        invalidateSelf()
+    private fun drawLongPressRings(canvas: Canvas, event: TouchEvent, color: Int) {
+        val r = Color.red(color); val g = Color.green(color); val b = Color.blue(color)
+        p.style = Paint.Style.STROKE
+        p.pathEffect = null; p.shader = null
+
+        for (i in 1..4) {
+            val ringR = config.tapPointRadius * (1.2f + i * 0.7f)
+            p.color = Color.argb((80 - i * 16).coerceAtLeast(10), r, g, b)
+            p.strokeWidth = 2.5f - i * 0.4f
+            canvas.drawCircle(event.x, event.y, ringR, p)
+        }
     }
 
 
-    override fun getOpacity(): Int {
-        return PixelFormat.TRANSLUCENT
-    }
 
-    override fun getIntrinsicWidth(): Int {
-        return interactions.maxOfOrNull { record ->
-            record.viewInfo.bounds?.right ?: 0
-        } ?: 0
-    }
+    // ── Публичный доступ для overlay ──────────────────────────────────────────
 
-    override fun getIntrinsicHeight(): Int {
-        return interactions.maxOfOrNull { record ->
-            record.viewInfo.bounds?.bottom ?: 0
-        } ?: 0
-    }
+    fun getCurrentRecord(): InteractionRecord? = interactions.getOrNull(currentIndex())
+    fun getCurrentIndex(): Int = currentIndex()
+    fun getTotalCount(): Int = interactions.size
+    fun gestureColorPublic(type: GestureType): Int = gestureColor(type)
+
+    // ── Drawable boilerplate ──────────────────────────────────────────────────
+
+    override fun setAlpha(alpha: Int) {}
+    override fun setColorFilter(cf: ColorFilter?) {}
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun getOpacity() = PixelFormat.TRANSLUCENT
 }

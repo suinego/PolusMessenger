@@ -9,36 +9,31 @@ import com.example.polusmessenger.domain.Message
 
 class ChatRepository(private val api: ApiService) : ChatRepositoryInterface {
 
-    override suspend fun getChats(): List<Chat> {
-        val response = api.getChats()
-        Log.d("ChatRepository", "загружено чатов: ${response.chats.size}")
-
-        return response.chats.map { it.toDomain() }
+    override suspend fun getChatsPage(limit: Int, offset: Int): Pair<List<Chat>, Int> {
+        val response = api.getChats(limit = limit, offset = offset)
+        val chatsList = response.chats ?: response.data ?: emptyList()
+        val total = response.total ?: chatsList.size
+        Log.d("ChatRepository", "загружено чатов: ${chatsList.size}, total=$total, offset=$offset")
+        return chatsList.map { it.toDomain() } to total
     }
 
     override suspend fun getMessages(chatId: Int): Pair<Chat, List<Message>> {
-        Log.d("ChatRepository", "вызов getChatика($chatId)")
+        Log.d("ChatRepository", "вызов getChat($chatId)")
         val response = api.getChat(chatId)
-        Log.d("ChatRepository", "загружено сообщений: ${response.messages.size} для чата ${response.messages.size}")
-
+        val messagesCount = response.messages?.size ?: 0
+        Log.d("ChatRepository", "загружено сообщений: $messagesCount для чата $chatId")
         return response.toDomain()
     }
+
     override suspend fun sendMessage(chatId: Int, text: String): List<Message> {
         val resp = api.postMessage(chatId, text)
-        return resp.messages.map { it.toDomain() }
+        return resp.messages.toDomainList()
     }
-
 
     override suspend fun createChat(name: String): List<Chat> {
         val response = api.createChat(name)
-        Log.d("ChatRepository", "создан новый чат '$name'")
-        return response.chats.map { it.toDomain() }
-    }
-
-    suspend fun createNewChat(name: String): Chat {
-        val response = api.createChat(name)
-        val newChat = response.chats.last()
-        Log.d("ChatRepository", "создан новый чат '${newChat.name}' с id=${newChat.id}")
-        return newChat.toDomain()
+        val chatsList = response.chats ?: response.data ?: emptyList()
+        Log.d("ChatRepository", "создан новый чат '$name', всего чатов: ${chatsList.size}")
+        return chatsList.map { it.toDomain() }
     }
 }

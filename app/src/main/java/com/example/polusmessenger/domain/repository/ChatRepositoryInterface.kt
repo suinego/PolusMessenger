@@ -5,7 +5,7 @@ import com.example.polusmessenger.domain.Message
 
 
 interface ChatRepositoryInterface {
-    suspend fun getChats(): List<Chat>
+    suspend fun getChatsPage(limit: Int, offset: Int): Pair<List<Chat>, Int>
 
     suspend fun getMessages(chatId: Int): Pair<Chat, List<Message>>
 

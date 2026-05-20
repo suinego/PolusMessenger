@@ -4,12 +4,11 @@ import com.example.polusmessenger.data.api.RetrofitService
 import com.example.polusmessenger.domain.repository.ChatRepository
 import com.example.polusmessenger.domain.usecase.*
 import com.example.polusmessenger.presentation.redux.*
-import android.util.Log
 
 object AppModule {
 
-    private const val BASE_URL = "http://emil-international.ru/mipt_network/"
-    private const val ACCESSTOKEN : String = "0123456789"
+    private const val BASE_URL = "http://emil-international.ru/"
+    private const val ACCESSTOKEN: String = "0123456789"
 
     val store: Store<AppState> by lazy {
         val api = RetrofitService.create(BASE_URL, ACCESSTOKEN)
@@ -25,6 +24,7 @@ object AppModule {
             middlewares = emptyList(),
             epics = listOf(
                 LoadChatsEpic(getChatsUseCase::invoke),
+                LoadMoreChatsEpic(getChatsUseCase::invoke),
                 LoadMessagesEpic { chatId ->
                     val (chat, messages) = getMessagesUseCase(chatId)
                     chat to messages

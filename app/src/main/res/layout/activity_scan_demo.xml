@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A2E">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tvDemoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ScanView Demo"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvDemoSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Нажимайте на элементы — ScanView запишет ViewState"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Кастомная View — смайлик -->
+        <com.example.polusmessenger.demo.CustomSmileyView
+            android:id="@+id/smileyView"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Кнопка -->
+        <Button
+            android:id="@+id/btnDemo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Нажми меня"
+            android:backgroundTint="#6200EE"
+            android:layout_marginBottom="16dp" />
+
+        <!-- TextView -->
+        <TextView
+            android:id="@+id/tvDemoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Текстовая метка"
+            android:textColor="#E0E0E0"
+            android:textSize="16sp"
+            android:background="#2A2A3E"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- EditText -->
+        <EditText
+            android:id="@+id/etDemoInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите текст..."
+            android:textColor="#FFFFFF"
+            android:textColorHint="#666666"
+            android:backgroundTint="#444466"
+            android:layout_marginBottom="32dp" />
+
+        <!-- ImageView-заглушка -->
+        <ImageView
+            android:id="@+id/ivDemoImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:tint="#6200EE"
+            android:layout_marginBottom="32dp"
+            android:contentDescription="demo image" />
+
+        <Button
+            android:id="@+id/btnShowResults"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Показать результаты"
+            android:backgroundTint="#CE0404" />
+
+    </LinearLayout>
+
+</ScrollView>

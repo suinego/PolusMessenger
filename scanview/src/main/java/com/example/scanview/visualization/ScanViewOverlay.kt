@@ -2,7 +2,6 @@ package com.example.scanview.visualization
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -23,31 +22,14 @@ class ScanViewOverlay @JvmOverloads constructor(
     private var drawable: ScanViewDrawable? = null
     private var onDismiss: (() -> Unit)? = null
 
-    fun setOnDismissListener(listener: (() -> Unit)?) {
-        onDismiss = listener
-        isClickable = listener != null
-        isFocusable = listener != null
-    }
-    private val backgroundPaint = Paint().apply {
-        color = 0x00000000
-        style = Paint.Style.FILL
-    }
-
     fun setInteractions(interactions: List<InteractionRecord>, config: VisualizationConfig = VisualizationConfig()) {
         drawable = ScanViewDrawable(interactions, config)
         invalidate()
     }
 
 
-    fun clear() {
-        drawable = null
-        invalidate()
-    }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        
-        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), backgroundPaint)
         
         drawable?.let { drawable ->
             drawable.setBounds(0, 0, width, height)

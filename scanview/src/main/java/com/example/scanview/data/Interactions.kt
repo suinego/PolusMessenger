@@ -12,11 +12,13 @@ data class ViewInfo(
     val id: Int?,
     val idName: String?,
     val bounds: Rect?,
-    val text: String?  // для TextView/Button
+    val text: String?,  // для TextView/Button
+    val viewNode: ViewNode? = null
 )
 
 //запись
 data class InteractionRecord(
+    val screenName: String, // Название экрана (Activity)
     val viewInfo: ViewInfo,
     val gesture: Gesture,
     val timestamp: Long

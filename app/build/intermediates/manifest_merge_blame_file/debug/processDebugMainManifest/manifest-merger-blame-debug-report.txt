@@ -9,163 +9,167 @@
 9        android:targetSdkVersion="36" />
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:4:5-67
-11-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:4:22-64
+11-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:4:5-67
+11-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:4:22-64
 12
 13    <permission
-13-->[androidx.core:core:1.17.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\648b51b501d97c3c5ff6ae521af3d004\transformed\core-1.17.0\AndroidManifest.xml:22:5-24:47
+13-->[androidx.core:core:1.17.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/7db4becf2c09785057b93a30e510f889/transformed/core-1.17.0/AndroidManifest.xml:22:5-24:47
 14        android:name="com.example.polusmessenger.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-14-->[androidx.core:core:1.17.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\648b51b501d97c3c5ff6ae521af3d004\transformed\core-1.17.0\AndroidManifest.xml:23:9-81
+14-->[androidx.core:core:1.17.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/7db4becf2c09785057b93a30e510f889/transformed/core-1.17.0/AndroidManifest.xml:23:9-81
 15        android:protectionLevel="signature" />
-15-->[androidx.core:core:1.17.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\648b51b501d97c3c5ff6ae521af3d004\transformed\core-1.17.0\AndroidManifest.xml:24:9-44
+15-->[androidx.core:core:1.17.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/7db4becf2c09785057b93a30e510f889/transformed/core-1.17.0/AndroidManifest.xml:24:9-44
 16
 17    <uses-permission android:name="com.example.polusmessenger.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-17-->[androidx.core:core:1.17.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\648b51b501d97c3c5ff6ae521af3d004\transformed\core-1.17.0\AndroidManifest.xml:26:5-97
-17-->[androidx.core:core:1.17.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\648b51b501d97c3c5ff6ae521af3d004\transformed\core-1.17.0\AndroidManifest.xml:26:22-94
+17-->[androidx.core:core:1.17.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/7db4becf2c09785057b93a30e510f889/transformed/core-1.17.0/AndroidManifest.xml:26:5-97
+17-->[androidx.core:core:1.17.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/7db4becf2c09785057b93a30e510f889/transformed/core-1.17.0/AndroidManifest.xml:26:22-94
 18
 19    <application
-19-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:5:5-24:19
+19-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:5:5-24:19
 20        android:allowBackup="true"
-20-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:6:9-35
+20-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:6:9-35
 21        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-21-->[androidx.core:core:1.17.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\648b51b501d97c3c5ff6ae521af3d004\transformed\core-1.17.0\AndroidManifest.xml:28:18-86
-22        android:debuggable="true"
-23        android:extractNativeLibs="false"
-24        android:icon="@mipmap/ic_launcher"
-24-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:8:9-43
-25        android:label="@string/app_name"
-25-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:9:9-41
-26        android:roundIcon="@mipmap/ic_launcher_round"
-26-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:10:9-54
-27        android:supportsRtl="true"
-27-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:11:9-35
-28        android:testOnly="true"
-29        android:theme="@style/Theme.PolusMessenger"
-29-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:12:9-52
-30        android:usesCleartextTraffic="true" >
-30-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:7:9-44
-31        <activity
-31-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:13:9-23:20
-32            android:name="com.example.polusmessenger.MainActivity"
-32-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:14:13-41
-33            android:exported="true"
-33-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:15:13-36
-34            android:label="@string/app_name"
-34-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:16:13-45
-35            android:theme="@style/Theme.PolusMessenger" >
-35-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:17:13-56
-36            <intent-filter>
-36-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:18:13-22:29
-37                <action android:name="android.intent.action.MAIN" />
-37-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:19:17-69
-37-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:19:25-66
-38
-39                <category android:name="android.intent.category.LAUNCHER" />
-39-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:21:17-77
-39-->E:\PolusMessenger\app\src\main\AndroidManifest.xml:21:27-74
-40            </intent-filter>
-41        </activity>
-42        <activity
-42-->[androidx.compose.ui:ui-tooling-android:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\79cf21cfad08e06878fea10d3788dc82\transformed\ui-tooling\AndroidManifest.xml:23:9-25:39
-43            android:name="androidx.compose.ui.tooling.PreviewActivity"
-43-->[androidx.compose.ui:ui-tooling-android:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\79cf21cfad08e06878fea10d3788dc82\transformed\ui-tooling\AndroidManifest.xml:24:13-71
-44            android:exported="true" />
-44-->[androidx.compose.ui:ui-tooling-android:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\79cf21cfad08e06878fea10d3788dc82\transformed\ui-tooling\AndroidManifest.xml:25:13-36
-45        <activity
-45-->[androidx.compose.ui:ui-test-manifest:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\0d539825990d9ab6b07282c1a3d2fa44\transformed\ui-test-manifest-1.9.4\AndroidManifest.xml:23:9-26:79
-46            android:name="androidx.activity.ComponentActivity"
-46-->[androidx.compose.ui:ui-test-manifest:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\0d539825990d9ab6b07282c1a3d2fa44\transformed\ui-test-manifest-1.9.4\AndroidManifest.xml:24:13-63
-47            android:exported="true"
-47-->[androidx.compose.ui:ui-test-manifest:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\0d539825990d9ab6b07282c1a3d2fa44\transformed\ui-test-manifest-1.9.4\AndroidManifest.xml:25:13-36
-48            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
-48-->[androidx.compose.ui:ui-test-manifest:1.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\0d539825990d9ab6b07282c1a3d2fa44\transformed\ui-test-manifest-1.9.4\AndroidManifest.xml:26:13-76
+21-->[androidx.core:core:1.17.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/7db4becf2c09785057b93a30e510f889/transformed/core-1.17.0/AndroidManifest.xml:28:18-86
+22        android:extractNativeLibs="false"
+23        android:icon="@mipmap/ic_launcher"
+23-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:8:9-43
+24        android:label="@string/app_name"
+24-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:9:9-41
+25        android:roundIcon="@mipmap/ic_launcher_round"
+25-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:10:9-54
+26        android:supportsRtl="true"
+26-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:11:9-35
+27        android:testOnly="true"
+28        android:theme="@style/Theme.PolusMessenger"
+28-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:12:9-52
+29        android:usesCleartextTraffic="true" >
+29-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:7:9-44
+30        <activity
+30-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:13:9-23:20
+31            android:name="com.example.polusmessenger.MainActivity"
+31-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:14:13-41
+32            android:exported="true"
+32-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:15:13-36
+33            android:label="@string/app_name"
+33-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:16:13-45
+34            android:theme="@style/Theme.PolusMessenger" >
+34-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:17:13-56
+35            <intent-filter>
+35-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:18:13-22:29
+36                <action android:name="android.intent.action.MAIN" />
+36-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:19:17-69
+36-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:19:25-66
+37
+38                <category android:name="android.intent.category.LAUNCHER" />
+38-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:21:17-77
+38-->/Users/smorozila/Учеба/Диплом/Кодовая часть/app/src/main/AndroidManifest.xml:21:27-74
+39            </intent-filter>
+40        </activity>
+41
+42        <profileable
+43            android:enabled="true"
+44            android:shell="true" />
+45
+46        <activity
+46-->[androidx.compose.ui:ui-tooling-android:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/c212e2b70608e910b52e7685a01a7491/transformed/ui-tooling/AndroidManifest.xml:23:9-25:39
+47            android:name="androidx.compose.ui.tooling.PreviewActivity"
+47-->[androidx.compose.ui:ui-tooling-android:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/c212e2b70608e910b52e7685a01a7491/transformed/ui-tooling/AndroidManifest.xml:24:13-71
+48            android:exported="true" />
+48-->[androidx.compose.ui:ui-tooling-android:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/c212e2b70608e910b52e7685a01a7491/transformed/ui-tooling/AndroidManifest.xml:25:13-36
 49        <activity
-49-->[:scanview] E:\PolusMessenger\scanview\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:9-17:59
-50            android:name="com.example.scanview.ui.ScanViewResultsActivity"
-50-->[:scanview] E:\PolusMessenger\scanview\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:13-75
-51            android:exported="false"
-51-->[:scanview] E:\PolusMessenger\scanview\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:13-37
-52            android:theme="@style/Theme.PolusMessenger" />
-52-->[:scanview] E:\PolusMessenger\scanview\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-56
-53
-54        <uses-library
-54-->[androidx.window:window:1.0.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\cc4b1adc96734fecfb93b6229bb20cc4\transformed\window-1.0.0\AndroidManifest.xml:25:9-27:40
-55            android:name="androidx.window.extensions"
-55-->[androidx.window:window:1.0.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\cc4b1adc96734fecfb93b6229bb20cc4\transformed\window-1.0.0\AndroidManifest.xml:26:13-54
-56            android:required="false" />
-56-->[androidx.window:window:1.0.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\cc4b1adc96734fecfb93b6229bb20cc4\transformed\window-1.0.0\AndroidManifest.xml:27:13-37
-57        <uses-library
-57-->[androidx.window:window:1.0.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\cc4b1adc96734fecfb93b6229bb20cc4\transformed\window-1.0.0\AndroidManifest.xml:28:9-30:40
-58            android:name="androidx.window.sidecar"
-58-->[androidx.window:window:1.0.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\cc4b1adc96734fecfb93b6229bb20cc4\transformed\window-1.0.0\AndroidManifest.xml:29:13-51
-59            android:required="false" />
-59-->[androidx.window:window:1.0.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\cc4b1adc96734fecfb93b6229bb20cc4\transformed\window-1.0.0\AndroidManifest.xml:30:13-37
-60
-61        <provider
-61-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:24:9-32:20
-62            android:name="androidx.startup.InitializationProvider"
-62-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:25:13-67
-63            android:authorities="com.example.polusmessenger.androidx-startup"
-63-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:26:13-68
-64            android:exported="false" >
-64-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:27:13-37
-65            <meta-data
-65-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:29:13-31:52
-66                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-66-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:30:17-75
-67                android:value="androidx.startup" />
-67-->[androidx.emoji2:emoji2:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\1ff22066689514b67608f87fa74d9d23\transformed\emoji2-1.4.0\AndroidManifest.xml:31:17-49
-68            <meta-data
-68-->[androidx.lifecycle:lifecycle-process:2.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\79b468bf64d81493eee84e7fa30b9ebd\transformed\lifecycle-process-2.9.4\AndroidManifest.xml:29:13-31:52
-69                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-69-->[androidx.lifecycle:lifecycle-process:2.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\79b468bf64d81493eee84e7fa30b9ebd\transformed\lifecycle-process-2.9.4\AndroidManifest.xml:30:17-78
-70                android:value="androidx.startup" />
-70-->[androidx.lifecycle:lifecycle-process:2.9.4] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\79b468bf64d81493eee84e7fa30b9ebd\transformed\lifecycle-process-2.9.4\AndroidManifest.xml:31:17-49
-71            <meta-data
-71-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
-72                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-72-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
-73                android:value="androidx.startup" />
-73-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
-74        </provider>
-75
-76        <receiver
-76-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
-77            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-77-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
-78            android:directBootAware="false"
-78-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
-79            android:enabled="true"
-79-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
-80            android:exported="true"
-80-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
-81            android:permission="android.permission.DUMP" >
-81-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
-82            <intent-filter>
-82-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
-83                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-83-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
-83-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
-84            </intent-filter>
-85            <intent-filter>
-85-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
-86                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-86-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
-86-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
-87            </intent-filter>
-88            <intent-filter>
-88-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
-89                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-89-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
-89-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
-90            </intent-filter>
-91            <intent-filter>
-91-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
-92                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-92-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
-92-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\hadis\gradle-7.3\bin\caches\9.0-milestone-1\transforms\f38f8eac8a974f197f887576762edbe3\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
-93            </intent-filter>
-94        </receiver>
-95    </application>
-96
-97</manifest>
+49-->[androidx.compose.ui:ui-test-manifest:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/2ec97b10694454f7e70d44fdaadec5a4/transformed/ui-test-manifest-1.9.4/AndroidManifest.xml:23:9-26:79
+50            android:name="androidx.activity.ComponentActivity"
+50-->[androidx.compose.ui:ui-test-manifest:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/2ec97b10694454f7e70d44fdaadec5a4/transformed/ui-test-manifest-1.9.4/AndroidManifest.xml:24:13-63
+51            android:exported="true"
+51-->[androidx.compose.ui:ui-test-manifest:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/2ec97b10694454f7e70d44fdaadec5a4/transformed/ui-test-manifest-1.9.4/AndroidManifest.xml:25:13-36
+52            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+52-->[androidx.compose.ui:ui-test-manifest:1.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/2ec97b10694454f7e70d44fdaadec5a4/transformed/ui-test-manifest-1.9.4/AndroidManifest.xml:26:13-76
+53        <activity
+53-->[:scanview] /Users/smorozila/Учеба/Диплом/Кодовая часть/scanview/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:9-17:59
+54            android:name="com.example.scanview.ui.ScanViewResultsActivity"
+54-->[:scanview] /Users/smorozila/Учеба/Диплом/Кодовая часть/scanview/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-75
+55            android:exported="false"
+55-->[:scanview] /Users/smorozila/Учеба/Диплом/Кодовая часть/scanview/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-37
+56            android:theme="@style/Theme.PolusMessenger" />
+56-->[:scanview] /Users/smorozila/Учеба/Диплом/Кодовая часть/scanview/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:13-56
+57
+58        <uses-library
+58-->[androidx.window:window:1.0.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/abd7110adedc9172e954121630e254fc/transformed/window-1.0.0/AndroidManifest.xml:25:9-27:40
+59            android:name="androidx.window.extensions"
+59-->[androidx.window:window:1.0.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/abd7110adedc9172e954121630e254fc/transformed/window-1.0.0/AndroidManifest.xml:26:13-54
+60            android:required="false" />
+60-->[androidx.window:window:1.0.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/abd7110adedc9172e954121630e254fc/transformed/window-1.0.0/AndroidManifest.xml:27:13-37
+61        <uses-library
+61-->[androidx.window:window:1.0.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/abd7110adedc9172e954121630e254fc/transformed/window-1.0.0/AndroidManifest.xml:28:9-30:40
+62            android:name="androidx.window.sidecar"
+62-->[androidx.window:window:1.0.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/abd7110adedc9172e954121630e254fc/transformed/window-1.0.0/AndroidManifest.xml:29:13-51
+63            android:required="false" />
+63-->[androidx.window:window:1.0.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/abd7110adedc9172e954121630e254fc/transformed/window-1.0.0/AndroidManifest.xml:30:13-37
+64
+65        <provider
+65-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+66            android:name="androidx.startup.InitializationProvider"
+66-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+67            android:authorities="com.example.polusmessenger.androidx-startup"
+67-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+68            android:exported="false" >
+68-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+69            <meta-data
+69-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+70                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+70-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+71                android:value="androidx.startup" />
+71-->[androidx.emoji2:emoji2:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/f81a89752cb67beab4ff9c83de0cf460/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+72            <meta-data
+72-->[androidx.lifecycle:lifecycle-process:2.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/6cc44301ecde0d246ecb301fe34cfbf5/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:29:13-31:52
+73                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+73-->[androidx.lifecycle:lifecycle-process:2.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/6cc44301ecde0d246ecb301fe34cfbf5/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:30:17-78
+74                android:value="androidx.startup" />
+74-->[androidx.lifecycle:lifecycle-process:2.9.4] /Users/smorozila/.gradle/caches/9.3.1/transforms/6cc44301ecde0d246ecb301fe34cfbf5/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:31:17-49
+75            <meta-data
+75-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+76                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+76-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+77                android:value="androidx.startup" />
+77-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+78        </provider>
+79
+80        <receiver
+80-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+81            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+81-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+82            android:directBootAware="false"
+82-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+83            android:enabled="true"
+83-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+84            android:exported="true"
+84-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+85            android:permission="android.permission.DUMP" >
+85-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+86            <intent-filter>
+86-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+87                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+87-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+87-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+88            </intent-filter>
+89            <intent-filter>
+89-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+90                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+90-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+90-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+91            </intent-filter>
+92            <intent-filter>
+92-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+93                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+93-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+93-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+94            </intent-filter>
+95            <intent-filter>
+95-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+96                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+96-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+96-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/smorozila/.gradle/caches/9.3.1/transforms/bd3c9a2de37ce9fe6c93d2aa4b3ba1f5/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+97            </intent-filter>
+98        </receiver>
+99    </application>
+100
+101</manifest>

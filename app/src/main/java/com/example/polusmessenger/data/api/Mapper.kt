@@ -17,12 +17,12 @@ fun MessageResponse.toDomain(): Message {
         text = this.text,
     )
 }
-fun List<MessageResponse>.toDomainList(): List<Message> =
-    map { it.toDomain() }
+
+fun List<MessageResponse>?.toDomainList(): List<Message> =
+    this?.map { it.toDomain() } ?: emptyList()
 
 fun ChatWithMessagesResponse.toDomain(): Pair<Chat, List<Message>> {
-    val chat = Chat( id = this.id, name = "${this.id}")
-    val messages = messages.map { it.toDomain() }
+    val chat = Chat(id = this.id, name = "${this.id}")
+    val messages = this.messages?.map { it.toDomain() } ?: emptyList()
     return chat to messages
 }
-

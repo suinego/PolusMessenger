@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.polusmessenger.app-mergeDebugResources-55:/values-v30/values-v30.xml",
+            "outputFile": "com.example.polusmessenger.app-mergeDebugResources-56:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\hadis\\gradle-7.3\\bin\\caches\\9.0-milestone-1\\transforms\\3f6cd80d0cb526591530d2a464562553\\transformed\\material3\\res\\values-v30\\values-v30.xml",
+                    "source": "/Users/smorozila/.gradle/caches/9.3.1/transforms/341ecf337b2145820a920ca0f5bfa9a1/transformed/material3/res/values-v30/values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

@@ -1,39 +1,45 @@
 package com.example.scanview.internal
 
-import android.app.Activity
 import android.graphics.Rect
-import android.os.Handler
-import android.os.Looper
 import android.view.*
 import android.widget.TextView
 import com.example.scanview.api.ScanViewManager
 import com.example.scanview.api.ScanViewManagerDeps
 import com.example.scanview.data.*
-import com.example.scanview.internal.toDto
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
 
 internal class ScanViewManagerImpl(
     private val deps: ScanViewManagerDeps
 ) : ScanViewManager {
     companion object {
-        private const val TAG = "ScanView" // в будущем убрать
+        private const val TAG = "ScanView"
         private const val SWIPE = 100f
         private const val TAP_MAX_DURATION = 300L
         private const val LONG_PRESS_DURATION = 500L
     }
 
-    private val history = mutableListOf<InteractionRecord>() // список всех записанных взаимодействий
+    private val history = mutableListOf<InteractionRecord>()
     private var isRecording = false
+
+    // Для метрики M3 — передаётся снаружи через FrameMetrics listener
+    private var externalFrameDurationsMs: List<Double> = emptyList()
+
+    // Для overhead-измерения — время обработки каждого MotionEvent
+    private val eventHandlingTimesUs = mutableListOf<Long>()
     private var recordingStartTime = 0L
     private var currentGesture: MutableList<TouchEvent>? = null
     private var inmomentTargetView: View? = null
 
-    private var originalCallback: Window.Callback? = null //переназвать
+    private var originalCallback: Window.Callback? = null
 
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-        // Начало записи, если уже записываем то return, иначе запускаем перехват касаний через подмену коллбека окна активити
+    private val gson: Gson = GsonBuilder()
+        .setPrettyPrinting()
+        .create()
+
     override fun startRecording() {
         if (isRecording) return
         val activity = deps.activityProvider?.invoke() ?: return
@@ -46,24 +52,37 @@ internal class ScanViewManagerImpl(
         isRecording = true
         deps.logger?.invoke(TAG, "Запись начата")
     }
-/*Останавливаем запись и восстанавливаем оригинальный коллбек окну*/
-    override fun stopRecording(){
-            if (!isRecording) return
 
-            deps.activityProvider?.invoke()?.window?.let { window ->
-                originalCallback?.let { window.callback = it }
-            }
-            isRecording = false
-            currentGesture = null
-            inmomentTargetView = null
-            val duration = System.currentTimeMillis() - recordingStartTime
-            deps.logger?.invoke(TAG, "зАпись остановлена длительность=$duration, взаимодейтсвия=${history.size}")
+    override fun stopRecording(){
+        if (!isRecording) return
+
+        deps.activityProvider?.invoke()?.window?.let { window ->
+            originalCallback?.let { window.callback = it }
+        }
+        isRecording = false
+        currentGesture = null
+        inmomentTargetView = null
+        val duration = System.currentTimeMillis() - recordingStartTime
+        deps.logger?.invoke(TAG, "Запись остановлена длительность=$duration, взаимодействия=${history.size}")
     }
+
     override fun isRecording(): Boolean = isRecording
 
     override fun clearHistory() = history.clear()
 
     override fun getHistory(): List<InteractionRecord> = history.toList()
+
+    override fun deserialize(json: String): List<InteractionRecord> {
+        return runCatching {
+            val wrapper = gson.fromJson(json, JsonObject::class.java)
+            val interactionsElement = wrapper.get("interactions")
+            val type = object : TypeToken<List<InteractionRecordDto>>() {}.type
+            val dtos: List<InteractionRecordDto> = gson.fromJson(interactionsElement, type)
+            dtos.map { it.toDomain() }
+        }.onFailure { e ->
+            deps.logger?.invoke(TAG, "Ошибка десериализации: ${e.message}")
+        }.getOrElse { emptyList() }
+    }
 
     override fun serialize(): String {
         val data = mapOf(
@@ -74,8 +93,7 @@ internal class ScanViewManagerImpl(
         return gson.toJson(data)
     }
 
-    /*рекурсивно ищем глубокую View в иерархии по координатам нажатия*/
-    override  fun findViewAt(view: View?, x: Int, y: Int): View? {
+    override fun findViewAt(view: View?, x: Int, y: Int): View? {
         if (view == null || !view.isShown) return null
         val loc = IntArray(2)
         view.getLocationOnScreen(loc)
@@ -83,7 +101,7 @@ internal class ScanViewManagerImpl(
         if (!rect.contains(x, y)) return null
 
         if (view is ViewGroup) {
-            for (i in view.childCount - 1 downTo 0) { // сверху вниз
+            for (i in view.childCount - 1 downTo 0) {
                 val child = view.getChildAt(i)
                 val found = findViewAt(child, x, y)
                 if (found != null) return found
@@ -99,13 +117,62 @@ internal class ScanViewManagerImpl(
 
         override fun dispatchTouchEvent(event: MotionEvent): Boolean {
             if (isRecording) {
+                val t0 = System.nanoTime()
                 handleMotionEvent(event)
+                val elapsedUs = (System.nanoTime() - t0) / 1000L
+                eventHandlingTimesUs.add(elapsedUs)
             }
             return delegate.dispatchTouchEvent(event)
         }
     }
 
-    /*Обработка этапов касания ищем view по которой был ACTION_DOWN*/
+    override fun captureViewNode(view: View, depth: Int): ViewNode? =
+        runCatching { ViewStateExtractor.extract(view, depth) }.getOrNull()
+
+    override fun setFrameMetricsData(frameDurationsMs: List<Double>) {
+        externalFrameDurationsMs = frameDurationsMs
+    }
+
+    override fun computeDiagnostics(): DiagnosticMetrics {
+        // ── M3: FrameMetrics ─────────────────────────────────────────────────
+        val frames = externalFrameDurationsMs
+        val avgFrame = if (frames.isEmpty()) 0.0 else frames.average()
+        val p95Frame = if (frames.isEmpty()) 0.0 else {
+            val sorted = frames.sorted()
+            sorted[(sorted.size * 0.95).toInt().coerceAtMost(sorted.lastIndex)]
+        }
+        val jankCount = frames.count { it > 16.6 }
+
+        // ── Q1: idName resolution ────────────────────────────────────────────
+        val resolved = history.count { it.viewInfo.idName != null }
+        val q1Rate = if (history.isEmpty()) 0.0 else resolved.toDouble() / history.size
+
+        // ── Q2: timestamp gaps ───────────────────────────────────────────────
+        val gaps = if (history.size < 2) emptyList()
+        else history.zipWithNext { a, b -> b.timestamp - a.timestamp }
+        val maxGap = gaps.maxOrNull() ?: 0L
+        val avgGap = if (gaps.isEmpty()) 0.0 else gaps.average()
+
+        // ── Overhead ─────────────────────────────────────────────────────────
+        val avgOverhead = if (eventHandlingTimesUs.isEmpty()) 0.0
+                         else eventHandlingTimesUs.average()
+        val maxOverhead = eventHandlingTimesUs.maxOrNull() ?: 0L
+
+        return DiagnosticMetrics(
+            avgFrameMs = avgFrame,
+            p95FrameMs = p95Frame,
+            jankFrameCount = jankCount,
+            totalFrameCount = frames.size,
+            idNameResolutionRate = q1Rate,
+            resolvedIdCount = resolved,
+            totalInteractions = history.size,
+            maxTimestampGapMs = maxGap,
+            avgTimestampGapMs = avgGap,
+            avgEventHandlingUs = avgOverhead,
+            maxEventHandlingUs = maxOverhead
+        )
+    }
+
     private fun handleMotionEvent(event: MotionEvent) {
         val action = event.actionMasked
         val timestamp = System.currentTimeMillis()
@@ -131,7 +198,7 @@ internal class ScanViewManagerImpl(
             }
         }
     }
-    // сохраним отдельную точку касания в текущий жест
+
     private fun addTouchEvent(event: MotionEvent, timestamp: Long) {
         currentGesture?.add(
             TouchEvent(
@@ -144,7 +211,7 @@ internal class ScanViewManagerImpl(
             )
         )
     }
-//определимс типа жеста на основе времени и дистанции
+
     private fun createGestureFromEvents(events: List<TouchEvent>): Gesture {
         val start = events.first()
         val end = events.last()
@@ -152,51 +219,66 @@ internal class ScanViewManagerImpl(
         val dx = end.x - start.x
         val dy = end.y - start.y
         val distance = sqrt(dx * dx + dy * dy)
-        val swipablex = dpinpixels(SWIPE)
-        val maxdist = dpinpixels(20f)
+        val swipeThreshold = dpinpixels(SWIPE)
+        val maxTapDistance = dpinpixels(20f)
         val type = when {
-            duration > LONG_PRESS_DURATION && distance < maxdist ->
+            duration > LONG_PRESS_DURATION && distance < maxTapDistance ->
                 GestureType.LONG_PRESS
-            distance > swipablex ->
+            distance > swipeThreshold ->
                 GestureType.SWIPE
-            duration <= TAP_MAX_DURATION && distance < maxdist ->
+            duration <= TAP_MAX_DURATION && distance < maxTapDistance ->
                 GestureType.TAP
             else -> GestureType.MOVE
         }
+
+        val moveEvents = if (events.size > 2) events.drop(1).dropLast(1) else emptyList()
+        val sampledMoveEvents = sampleMoveEvents(moveEvents, maxPoints = deps.config.maxMoveEventSamples)
 
         return Gesture(
             type = type,
             startEvent = start,
             endEvent = end,
-            posledovatelnostMoveEvent = if (events.size > 2) events.drop(1).dropLast(1) else emptyList() // все event которые находяться между UP DOWN при этом первое и последнее действие удаляем
+            posledovatelnostMoveEvent = sampledMoveEvents
         )
     }
-//создаем запись о взаимодействии и добавляем в историбю
+
     private fun recordInteraction(view: View, gesture: Gesture) {
+        // Приоритет: кастомный провайдер (фрагмент) → имя Activity → "Unknown"
+        val screenName = deps.screenNameProvider?.invoke()
+            ?: deps.activityProvider?.invoke()?.javaClass?.simpleName
+            ?: "Unknown"
+
         val record = InteractionRecord(
+            screenName = screenName,
             viewInfo = createViewInfo(view),
             gesture = gesture,
             timestamp = gesture.startEvent.timestamp
         )
         history.add(record)
     }
-//информация о view (ID, текст, класс, размеры)
+
     private fun createViewInfo(view: View): ViewInfo {
         val id = if (view.id != View.NO_ID) view.id else null
         val idName = id?.let {
-            runCatching { deps.context.resources.getResourceEntryName(it) }.getOrNull() //
+            runCatching { deps.context.resources.getResourceEntryName(it) }.getOrNull()
         }
         val bounds = getViewBoundsOnScreen(view)
         val text = if (view is TextView) view.text?.toString() else null
+        
+        val viewNode = runCatching {
+            ViewStateExtractor.extract(view, maxDepth = deps.config.maxViewNodeDepth)
+        }.getOrNull()
+        
         return ViewInfo(
             className = view.javaClass.simpleName,
             id = id,
             idName = idName,
             bounds = bounds,
-            text = text
+            text = text,
+            viewNode = viewNode
         )
     }
-//абсолютгые координаты view на экране
+
     private fun getViewBoundsOnScreen(view: View): Rect? {
         if (!view.isAttachedToWindow) return null
         val loc = IntArray(2)
@@ -204,9 +286,16 @@ internal class ScanViewManagerImpl(
         return Rect(loc[0], loc[1], loc[0] + view.width, loc[1] + view.height)
     }
 
+    /** Равномерная выборка из списка событий движения */
+    private fun sampleMoveEvents(events: List<TouchEvent>, maxPoints: Int): List<TouchEvent> {
+        if (events.size <= maxPoints) return events
+        val step = events.size.toDouble() / maxPoints
+        return (0 until maxPoints).map { i -> events[(i * step).toInt()] }
+    }
+
     private fun dpinpixels(dp: Float): Float =
         dp * deps.context.resources.displayMetrics.density
-    //итоговая статистика по всем типам наэатий
+
     override fun getStatistics(): InteractionStatistics {
         val stats = history.groupBy { it.gesture.type }
         return InteractionStatistics(

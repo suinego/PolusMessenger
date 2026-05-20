@@ -8,6 +8,6 @@ data class MessageResponse(
 )
 
 data class SendMessageResponse(
-    val id: Int,
-    val messages: List<MessageResponse>
+    @SerializedName("id") val id: Int,
+    @SerializedName("messages") val messages: List<MessageResponse>
 )

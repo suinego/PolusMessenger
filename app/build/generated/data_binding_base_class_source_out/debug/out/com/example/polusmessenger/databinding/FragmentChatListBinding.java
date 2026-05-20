@@ -4,7 +4,8 @@ package com.example.polusmessenger.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +19,7 @@ import java.lang.String;
 
 public final class FragmentChatListBinding implements ViewBinding {
   @NonNull
-  private final FrameLayout rootView;
+  private final LinearLayout rootView;
 
   @NonNull
   public final FloatingActionButton fabCreateChat;
@@ -26,16 +27,21 @@ public final class FragmentChatListBinding implements ViewBinding {
   @NonNull
   public final RecyclerView recyclerChats;
 
-  private FragmentChatListBinding(@NonNull FrameLayout rootView,
-      @NonNull FloatingActionButton fabCreateChat, @NonNull RecyclerView recyclerChats) {
+  @NonNull
+  public final EditText searchChats;
+
+  private FragmentChatListBinding(@NonNull LinearLayout rootView,
+      @NonNull FloatingActionButton fabCreateChat, @NonNull RecyclerView recyclerChats,
+      @NonNull EditText searchChats) {
     this.rootView = rootView;
     this.fabCreateChat = fabCreateChat;
     this.recyclerChats = recyclerChats;
+    this.searchChats = searchChats;
   }
 
   @Override
   @NonNull
-  public FrameLayout getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -72,7 +78,14 @@ public final class FragmentChatListBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentChatListBinding((FrameLayout) rootView, fabCreateChat, recyclerChats);
+      id = R.id.searchChats;
+      EditText searchChats = ViewBindings.findChildViewById(rootView, id);
+      if (searchChats == null) {
+        break missingId;
+      }
+
+      return new FragmentChatListBinding((LinearLayout) rootView, fabCreateChat, recyclerChats,
+          searchChats);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

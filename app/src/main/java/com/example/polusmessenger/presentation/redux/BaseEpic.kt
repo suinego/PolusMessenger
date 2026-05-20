@@ -1,11 +1,13 @@
+@file:OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+
 package com.example.polusmessenger.presentation.redux
 
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.*
+import android.util.Log
 import com.example.polusmessenger.domain.Chat
 import com.example.polusmessenger.domain.Message
-import android.util.Log
-import com.example.polusmessenger.domain.usecase.CreateChatUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 
 abstract class BaseEpic : Epic {
     inline fun <reified T : Action> Flow<Action>.ofType(): Flow<T> =
@@ -13,26 +15,39 @@ abstract class BaseEpic : Epic {
 }
 
 class LoadChatsEpic(
-    private val getChatsUseCase: suspend () -> List<Chat>
+    private val getChats: suspend (Int) -> Pair<List<Chat>, Int>
 ) : BaseEpic() {
 
     override fun act(actions: Flow<Action>): Flow<Action> =
         actions.ofType<AppAction.LoadChats>()
             .flatMapLatest {
-                flow {
-                    emit(getChatsUseCase())
+                flow<Action> {
+                    val (chats, total) = getChats(0)
+                    emit(AppAction.ChatsLoaded(chats, total))
+                }.catch { e ->
+                    emit(AppAction.LoadChatsFailed(e.message ?: "Ошибка загрузки чатов"))
                 }
-                    .map<List<Chat>, Action> { chats ->
-                        AppAction.ChatsLoaded(chats)
-                    }
-                    .catch { e ->
-                        emit(AppAction.LoadChatsFailed(e.message ?: "неизвестно"))
-                    }
+            }
+}
+
+class LoadMoreChatsEpic(
+    private val getChats: suspend (Int) -> Pair<List<Chat>, Int>
+) : BaseEpic() {
+
+    override fun act(actions: Flow<Action>): Flow<Action> =
+        actions.ofType<AppAction.LoadMoreChats>()
+            .flatMapConcat { action ->
+                flow<Action> {
+                    val (chats, total) = getChats(action.offset)
+                    emit(AppAction.MoreChatsLoaded(chats, total))
+                }.catch { e ->
+                    emit(AppAction.LoadChatsFailed(e.message ?: "Ошибка загрузки следующей страницы"))
+                }
             }
 }
 
 class LoadMessagesEpic(
-    private val getMessagesUseCase: suspend (Int) -> Pair<Chat, List<Message>>
+    private val getMessages: suspend (Int) -> Pair<Chat, List<Message>>
 ) : BaseEpic() {
 
     override fun act(actions: Flow<Action>): Flow<Action> =
@@ -41,7 +56,7 @@ class LoadMessagesEpic(
             .flatMapConcat { action ->
                 flow {
                     try {
-                        val (chat, messages) = getMessagesUseCase(action.chatId)
+                        val (chat, messages) = getMessages(action.chatId)
                         Log.d("Epic", "Загружено сообщений: ${messages.size} для chatId=${chat.id}")
                         emit(AppAction.MessagesLoaded(chat.id, messages))
                     } catch (e: Exception) {
@@ -54,11 +69,11 @@ class LoadMessagesEpic(
 
 class SendMessageEpic(
     private val getState: () -> AppState,
-    private val sendMessageUseCase: suspend (Int, String) -> List<Message>
+    private val sendMessage: suspend (Int, String) -> List<Message>
 ) : BaseEpic() {
 
-    override fun act(actions: Flow<Action>): Flow<Action> {
-        return actions.ofType<AppAction.SendMessage>()
+    override fun act(actions: Flow<Action>): Flow<Action> =
+        actions.ofType<AppAction.SendMessage>()
             .flatMapConcat { action ->
                 flow {
                     val chatId = action.chatId
@@ -68,27 +83,24 @@ class SendMessageEpic(
                         id = -(System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
                         text = text
                     )
-
-                    val withTemp = currentMessages + tempMessage
-                    emit(AppAction.MessagesLoaded(chatId, withTemp))
+                    emit(AppAction.MessagesLoaded(chatId, currentMessages + tempMessage))
 
                     try {
                         val serverMessages = withContext(Dispatchers.IO) {
-                            sendMessageUseCase(chatId, text)
+                            sendMessage(chatId, text)
                         }
                         emit(AppAction.MessagesLoaded(chatId, serverMessages))
                     } catch (e: Exception) {
                         Log.e("SendMessageEpic", "отправка не отработала", e)
-                        val withoutTemp = currentMessages
-                        emit(AppAction.MessagesLoaded(chatId, withoutTemp))
+                        emit(AppAction.MessagesLoaded(chatId, currentMessages))
                         emit(AppAction.MessageSendFailed(e.localizedMessage ?: "Отправка не отработала"))
                     }
                 }
             }
-    }
 }
+
 class CreateChatEpic(
-    private val createChatUseCase: suspend (String) -> Chat
+    private val createChat: suspend (String) -> List<Chat>
 ) : BaseEpic() {
 
     override fun act(actions: Flow<Action>): Flow<Action> =
@@ -97,13 +109,18 @@ class CreateChatEpic(
             .flatMapConcat { action ->
                 flow {
                     try {
-                        val newChat = createChatUseCase(action.name)
-                        emit(AppAction.ChatCreated(newChat))
+                        val allChats = createChat(action.name)
+                        //обновляем весь список чатов с сервера
+                        emit(AppAction.ChatsLoaded(allChats, allChats.size))
+                        //выбираем последний (новый) чат
+                        val newChat = allChats.lastOrNull()
+                        if (newChat != null) {
+                            emit(AppAction.SelectChat(newChat.id))
+                        }
                     } catch (e: Exception) {
-                        Log.e("CreateChatEpic", "ЧАТ УПАЛ", e)
+                        Log.e("CreateChatEpic", "Создание чата провалено", e)
                         emit(AppAction.ChatCreationFailed(e.message ?: "unknown"))
                     }
                 }
             }
 }
-

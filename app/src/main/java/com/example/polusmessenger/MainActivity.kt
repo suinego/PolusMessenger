@@ -1,93 +1,110 @@
 package com.example.polusmessenger
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.polusmessenger.R
 import com.example.polusmessenger.di.AppModule
 import com.example.polusmessenger.presentation.chat.ChatFragment
 import com.example.polusmessenger.presentation.list.ChatListFragment
+import com.example.polusmessenger.experiments.ExperimentManager
+import com.example.polusmessenger.presentation.profile.ProfileFragment
+import com.example.polusmessenger.presentation.results.ScanResultsFragment
 import com.example.scanview.api.ScanViewManager
-import com.example.scanview.api.ScanViewManagerFactory
 import com.example.scanview.api.ScanViewManagerDeps
-import com.example.scanview.visualization.ScanViewVisualizer
-import com.example.scanview.visualization.ScanViewOverlay
-import com.example.scanview.ui.ScanViewResultsActivity
-import kotlinx.coroutines.launch
+import com.example.scanview.api.ScanViewManagerFactory
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import android.view.FrameMetrics
+import android.view.Window
 import java.io.File
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
     private val store by lazy { AppModule.store }
+    private lateinit var bottomNav: BottomNavigationView
 
-    private val scanViewManager: ScanViewManager by lazy {
-        val deps = object : ScanViewManagerDeps { //передаем зависимости
-            override val context = this@MainActivity //активити контекст
-            override val rootViewProvider: () -> View? = //корневой вью
-                { window.decorView.rootView }
-            override val activityProvider: (() -> android.app.Activity)? = //callback,  лямбда так как будет иначе держать активити
-                   { this@MainActivity }
-            override val logger: ((String, String) -> Unit)? = //логер
-                { tag, msg -> Log.d(tag, msg) }
-        }
-
-        ScanViewManagerFactory.create(deps)
+    internal val scanViewManager: ScanViewManager by lazy {
+        ScanViewManagerFactory.create(object : ScanViewManagerDeps {
+            override val context = this@MainActivity
+            override val rootViewProvider: () -> View? = { window.decorView.rootView }
+            override val activityProvider: (() -> android.app.Activity) = { this@MainActivity }
+            override val logger: ((String, String) -> Unit) = { tag, msg -> Log.d(tag, msg) }
+            override val screenNameProvider: (() -> String) = {
+                // Возвращаем читаемое имя текущего фрагмента
+                when (supportFragmentManager.findFragmentById(R.id.container)) {
+                    is ChatListFragment -> "Чаты"
+                    is ChatFragment -> "Переписка"
+                    is ProfileFragment -> "Профиль"
+                    is ScanResultsFragment -> "Результаты"
+                    else -> "Главный экран"
+                }
+            }
+        })
     }
-    private var visualizationOverlay: ScanViewOverlay? = null // для визуализации
-//Доработать
+
+    // Файл сессии, который нужно открыть в ResultsFragment при следующем onResume
+    var pendingSessionFile: File? = null
+
+    /** Менеджер экспериментов S1/S2 для дипломной работы */
+    val experimentManager by lazy {
+        ExperimentManager(scanViewManager) { window.decorView }
+    }
+
+    // M3: накапливаем длительности кадров во время записи
+    private val frameDurationsMs = mutableListOf<Double>()
+    private val frameListener = Window.OnFrameMetricsAvailableListener { _, metrics, _ ->
+        if (scanViewManager.isRecording()) {
+            val totalNs = metrics.getMetric(FrameMetrics.TOTAL_DURATION)
+            frameDurationsMs.add(totalNs / 1_000_000.0)
+        }
+    }
+
+    private var currentTab = R.id.nav_chats
+    private var recordingStartMs = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (savedInstanceState == null) {
-            supportFragmentManager.commit {  // фрагмент списка при первой загрузке
+            supportFragmentManager.commit {
                 replace(R.id.container, ChatListFragment())
             }
         }
 
-        // просмотр scanview кнопка
-
-        findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabScanViewResults)
-            ?.setOnClickListener {
-                val history = scanViewManager.getHistory()
-                Log.d(
-                    "MainActivity","Открытие экрана результатов: передано ${history.size} взаимодействий"
-                )
-                if (history.isEmpty()) {
-                    Log.w("MainActivity", "нет истории ")
-                } else {
-                    history.forEachIndexed { index, record ->
-                        Log.d(
-                            "MainActivity", "  [$index] ${record.viewInfo.className} - ${record.gesture.type} at (${record.gesture.startEvent.x}, ${record.gesture.startEvent.y})"
-                        )
-                    }
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.setOnItemSelectedListener { item ->
+            currentTab = item.itemId
+            when (item.itemId) {
+                R.id.nav_chats -> navigateToChats()
+                R.id.nav_profile -> supportFragmentManager.commit {
+                    replace(R.id.container, ProfileFragment())
                 }
-                ScanViewResultsActivity.setData(history)
-                startActivity(ScanViewResultsActivity.createIntent(this))
+                R.id.nav_results -> supportFragmentManager.commit {
+                    replace(R.id.container, ScanResultsFragment())
+                }
             }
-    // cледим за выбранным чатом в хранилище и подгружаем соответствующий фрагмент
+            true
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 store.states
                     .map { it.selectedChatId }
                     .distinctUntilChanged()
                     .collect { selectedChatId ->
+                        if (currentTab != R.id.nav_chats) return@collect
                         val top = supportFragmentManager.findFragmentById(R.id.container)
-
                         if (selectedChatId != null && top !is ChatFragment) {
-                            val chatId = selectedChatId
                             supportFragmentManager.commit {
                                 replace(R.id.container, ChatFragment().apply {
-                                    arguments = Bundle().apply {
-                                        putInt("chat_id", chatId)
-                                    }
+                                    arguments = Bundle().apply { putInt("chat_id", selectedChatId) }
                                 })
                                 addToBackStack(null)
                             }
@@ -99,70 +116,62 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
+    /** Открыть сохранённую сессию во вкладке Результаты */
+    fun openSession(file: File) {
+        pendingSessionFile = file
+        bottomNav.selectedItemId = R.id.nav_results
+    }
+
+    private fun navigateToChats() {
+        val top = supportFragmentManager.findFragmentById(R.id.container)
+        if (top !is ChatListFragment && top !is ChatFragment) {
+            supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            supportFragmentManager.commit { replace(R.id.container, ChatListFragment()) }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
-        scanViewManager.startRecording() //Запускаем наше взаимодествия
-        Log.d("MainActivity", "запись начата")
-
-        val rootView = window.decorView.rootView as? ViewGroup //view есть в корне и overlay создали
-        rootView?.let {
-            Log.d("MainActivity", "rootView детей: ${it.childCount}")
-            for (i in 0 until it.childCount) {
-                val child = it.getChildAt(i)
-                Log.d("MainActivity", "  дети $i: ${child.javaClass.simpleName}")
-            }
-        }
+        recordingStartMs = System.currentTimeMillis()
+        frameDurationsMs.clear()
+        window.addOnFrameMetricsAvailableListener(frameListener, android.os.Handler(mainLooper))
+        scanViewManager.startRecording()
     }
 
     override fun onPause() {
         super.onPause()
-        scanViewManager.stopRecording() //остановка
-        try {
-            val json = scanViewManager.serialize() //jason сохраняем
-            val file = File(filesDir, "scanview_history.json")
-            file.writeText(json)
-            Log.d("MainActivity", "JSON сохранён: ${file.absolutePath}")
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Ошибка сериализации: ${e.message}", e)
-        }
-        val stats = scanViewManager.getStatistics()
-        val interactions = scanViewManager.getHistory()
+        scanViewManager.stopRecording()
+        window.removeOnFrameMetricsAvailableListener(frameListener)
+        scanViewManager.setFrameMetricsData(frameDurationsMs.toList())
+        logMetrics()
+    }
 
-        Log.d(
-            "MainActivity", "onPause: ScanViewManager статистика:\n" +
-                    "  Всего взаимодействий: ${stats.totalInteractions}\n" +
-                    "  Тапы: ${stats.taps}, Свайпы: ${stats.swipes}, Движения: ${stats.moves}, Долгие нажатия: ${stats.longPresses}\n" +
-                    "  Уникальных View: ${stats.uniqueViews}\n" +
-                    "  История содержит: ${interactions.size} записей"
-        )
+    private fun logMetrics() {
+        val durationMs = System.currentTimeMillis() - recordingStartMs
+        val interactions = scanViewManager.getHistory().size
 
-        if (interactions.isEmpty()) {
-            Log.w("MainActivity", "история пустая после stopRecord")
-        } else {
-            Log.d("MainActivity", "История взаимодействий")
-            interactions.forEachIndexed { index, record ->
-                Log.d(
-                    "MainActivity",
-                    "  [$index] ${record.viewInfo.className} (${record.viewInfo.idName ?: "NO_ID"}) - ${record.gesture.type} at (${record.gesture.startEvent.x}, ${record.gesture.startEvent.y})"
-                )
-            }
-        }
-        //добавляем визуализацию на экран
-        if (interactions.isNotEmpty()) {
-            val rootView = window.decorView.rootView as? ViewGroup
-            rootView?.let { viewGroup: ViewGroup ->
-                visualizationOverlay = ScanViewVisualizer.attachOverlay(
-                    parent = viewGroup,
-                    interactions = interactions
-                )
-                // закрытие
-                visualizationOverlay?.setOnDismissListener {
-                    ScanViewVisualizer.detachOverlay(viewGroup, visualizationOverlay!!)
-                    visualizationOverlay = null
-                }
-                Log.d("MainActivity", "Визуализация добавлена: ${interactions.size} взаимодействий")
-            }
+        // Первая строчка всегда — чтобы знать что функция вызвалась
+        Log.d("ScanView", "▼▼▼ METRICS (сессия ${durationMs / 1000} с, $interactions взаим-ий) ▼▼▼")
+
+        runCatching {
+            val json     = scanViewManager.serialize()
+            val sizeKb   = json.toByteArray(Charsets.UTF_8).size / 1024.0
+            val kbPerMin = sizeKb / (durationMs / 60_000.0).coerceAtLeast(0.001)
+            val m        = scanViewManager.computeDiagnostics()
+
+            Log.d("ScanView", "╔══════════════════════════════════════════════════════╗")
+            Log.d("ScanView", "║  M4 │ JSON: %.1f КБ  │  %.1f КБ/мин".format(sizeKb, kbPerMin))
+            Log.d("ScanView", "║  M3 │ Avg: %.1f ms  │  p95: %.1f ms  │  Jank: %d/%d"
+                .format(m.avgFrameMs, m.p95FrameMs, m.jankFrameCount, m.totalFrameCount))
+            Log.d("ScanView", "║  Q1 │ idName: %d/%d (%.0f%%)"
+                .format(m.resolvedIdCount, m.totalInteractions, m.idNameResolutionRate * 100))
+            Log.d("ScanView", "║  Q2 │ Max gap: %d ms  │  Avg: %.0f ms"
+                .format(m.maxTimestampGapMs, m.avgTimestampGapMs))
+            Log.d("ScanView", "║ OVH │ Avg: %.1f µs  │  Max: %d µs"
+                .format(m.avgEventHandlingUs, m.maxEventHandlingUs))
+            Log.d("ScanView", "╚══════════════════════════════════════════════════════╝")
+        }.onFailure { e ->
+            Log.e("ScanView", "logMetrics упал: ${e.message}", e)
         }
     }
 }

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0D0D1A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="14dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Мои сессии"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnSaveSession"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="+ Сохранить"
+            android:textSize="12sp"
+            android:backgroundTint="#1565C0"
+            android:paddingHorizontal="14dp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1A1A2E" />
+
+    <!-- ── Панель экспериментов ── -->
+    <LinearLayout
+        android:id="@+id/experimentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#0A0A18"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ДИПЛОМНЫЕ ЭКСПЕРИМЕНТЫ"
+            android:textSize="10sp"
+            android:textColor="#444466"
+            android:textAllCaps="true"
+            android:letterSpacing="0.12"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnStartS1"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="▶ S1 Bitmap"
+                android:textSize="11sp"
+                android:backgroundTint="#1A3A1A" />
+
+            <Button
+                android:id="@+id/btnStartS2"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="▶ S2 ViewNode"
+                android:textSize="11sp"
+                android:backgroundTint="#1A1A3A" />
+
+            <Button
+                android:id="@+id/btnStopExperiment"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:text="■ Стоп"
+                android:textSize="11sp"
+                android:backgroundTint="#3A1A1A" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvExperimentStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="11sp"
+            android:textColor="#555577"
+            android:text="Нет активного эксперимента. Результаты в Logcat." />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1A1A2E" />
+
+    <!-- ── Пустое состояние ── -->
+    <TextView
+        android:id="@+id/tvNoSessions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Нет сохранённых сессий.\nНажмите «+ Сохранить» чтобы сохранить текущую запись взаимодействий."
+        android:textSize="14sp"
+        android:textColor="#444466"
+        android:gravity="center"
+        android:padding="40dp"
+        android:lineSpacingMultiplier="1.5"
+        android:visibility="gone" />
+
+    <!-- ── Список сессий (ScrollView → LinearLayout) ── -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/sessionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="24dp" />
+
+    </ScrollView>
+
+</LinearLayout>

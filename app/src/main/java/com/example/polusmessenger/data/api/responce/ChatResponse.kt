@@ -8,5 +8,9 @@ data class ChatResponse(
 )
 
 data class ChatsResponse(
-    val chats: List<ChatResponse>
+    @SerializedName("chats") val chats: List<ChatResponse>? = null,
+    @SerializedName("data") val data: List<ChatResponse>? = null,
+    @SerializedName("total") val total: Int? = null,
+    @SerializedName("limit") val limit: Int? = null,
+    @SerializedName("offset") val offset: Int? = null
 )

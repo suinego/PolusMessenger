@@ -1,13 +1,15 @@
 package com.example.scanview.ui
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.scanview.R
+import com.example.scanview.data.GestureType
 import com.example.scanview.data.InteractionRecord
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -16,11 +18,12 @@ class InteractionAdapter(
     private val onClick: ((InteractionRecord) -> Unit)? = null
 ) : RecyclerView.Adapter<InteractionAdapter.ViewHolder>() {
 
-    private val dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+    private val timeFmt = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvLine1: TextView = itemView.findViewById(R.id.tvLine1)
         val tvLine2: TextView = itemView.findViewById(R.id.tvLine2)
+        val accentBar: View = itemView.findViewById(R.id.accentBar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,23 +33,25 @@ class InteractionAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val interaction = interactions[position]
-        val gesture = interaction.gesture
-        val viewInfo = interaction.viewInfo
-        val line1 = "${position + 1}. ${viewInfo.className} ${viewInfo.idName ?: ""} - ${gesture.type.name}"
-        holder.tvLine1.text = line1
-        val start = gesture.startEvent
-        val end = gesture.endEvent
-        val coordinates = if (end != null) {
-            "screen=(${start.x.toInt()},${start.y.toInt()}) local=(${String.format("%.1f", start.localX)},${String.format("%.1f", start.localY)}) time=${dateFormat.format(Date(interaction.timestamp))}"
-        } else {
-            "screen=(${start.x.toInt()},${start.y.toInt()}) local=(${String.format("%.1f", start.localX)},${String.format("%.1f", start.localY)}) time=${dateFormat.format(Date(interaction.timestamp))}"
-        }
-        holder.tvLine2.text = coordinates
+        val record = interactions[position]
+        val gesture = record.gesture
+        val viewInfo = record.viewInfo
 
-        holder.itemView.setOnClickListener {
-            onClick?.invoke(interaction)
-        }
+        val typeColor = gestureColor(gesture.type)
+        holder.accentBar.setBackgroundColor(typeColor)
+        
+        // Линия 1: Название экрана (подсвечиваем цветом жеста или оставляем белым, но делаем главным)
+        holder.tvLine1.text = record.screenName
+        holder.tvLine1.setTextColor(Color.WHITE) // Оставляем белый для читаемости
+
+        // Линия 2: Номер, тип жеста, имя View и время
+        val viewLabel = viewInfo.idName ?: viewInfo.className
+        val time = timeFmt.format(Date(record.timestamp))
+        
+        holder.tvLine2.text = "${position + 1}. ${gesture.type.name} на $viewLabel\n($time)"
+        holder.tvLine2.setTextColor(typeColor) // Подсвечиваем вторую строку цветом жеста для акцента
+
+        holder.itemView.setOnClickListener { onClick?.invoke(record) }
     }
 
     override fun getItemCount(): Int = interactions.size
@@ -54,5 +59,14 @@ class InteractionAdapter(
     fun updateInteractions(newInteractions: List<InteractionRecord>) {
         interactions = newInteractions
         notifyDataSetChanged()
+    }
+
+    companion object {
+        fun gestureColor(type: GestureType): Int = when (type) {
+            GestureType.TAP        -> 0xFF00C853.toInt()
+            GestureType.SWIPE      -> 0xFFFF6D00.toInt()
+            GestureType.LONG_PRESS -> 0xFFAA00FF.toInt()
+            GestureType.MOVE       -> 0xFF0091EA.toInt()
+        }
     }
 }

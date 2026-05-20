@@ -1,11 +1,13 @@
 package com.example.polusmessenger.presentation.list
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +19,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
@@ -25,11 +26,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     private val store = AppModule.store
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: ChatListAdapter
+    private lateinit var searchEdit: EditText
 
-    // держим ссылку на диалог
     private var createChatDialog: androidx.appcompat.app.AlertDialog? = null
-
-    // сохраняем размер списка чатов в момент открытия диалога — для детекции нового чата
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +37,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recycler = view.findViewById(R.id.recyclerChats)
+        searchEdit = view.findViewById(R.id.searchChats)
+
         adapter = ChatListAdapter { chat ->
             lifecycleScope.launch {
                 store.dispatch(AppAction.SelectChat(chat.id))
@@ -48,40 +49,59 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 
-        view.findViewById<View>(R.id.fabCreateChat).setOnClickListener { showCreateChatDialog() }
+        setupSearch()
+        setupPagination()
+        observeChats()
 
-        observeViewState()
-            observeChatCreated()
+        view.findViewById<View>(R.id.fabCreateChat).setOnClickListener { showCreateChatDialog() }
     }
 
-    private fun observeViewState() {
+    private fun setupSearch() {
+        searchEdit.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) = adapter.filter(s?.toString() ?: "")
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun setupPagination() {
+        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val lm = rv.layoutManager as? LinearLayoutManager ?: return
+                val visible = lm.childCount
+                val total = lm.itemCount
+                val firstVisible = lm.findFirstVisibleItemPosition()
+
+                val state = store.getState()
+                val alreadyLoaded = state.chats.size
+                val serverTotal = state.chatsTotal
+                val isLoading = state.loadingMore || state.loading
+
+                if (!isLoading && alreadyLoaded < serverTotal &&
+                    firstVisible + visible + 5 >= total
+                ) {
+                    lifecycleScope.launch { store.dispatch(AppAction.LoadMoreChats(alreadyLoaded)) }
+                }
+            }
+        })
+    }
+
+    private fun observeChats() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 store.states
-                    .map { state -> state.chats }
+                    .map { it.chats }
                     .distinctUntilChanged()
                     .collect { chats ->
-                        adapter.submitList(chats)
+                        adapter.setChats(chats)
+                        val query = searchEdit.text?.toString() ?: ""
+                        if (query.isNotBlank()) adapter.filter(query)
                     }
             }
         }
     }
 
-    // следим за изменением количества чатов; если диалог открыт и список увеличился — закрываем диалог
-    private fun observeChatCreated() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                store.states
-                    .map { it.selectedChatId }
-                    .distinctUntilChanged()
-                    .collect { chatId ->
-                        if (chatId != null) {
-                            store.dispatch(AppAction.LoadMessages(chatId)) // при каждом выборе чата сообщения загрузятся
-                        }
-                    }
-            }
-        }
-    }
     private fun showCreateChatDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_create_chat, null)
         val nameInput = dialogView.findViewById<TextInputEditText>(R.id.chat_name_input)
@@ -90,18 +110,14 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             .setTitle("Создать новый чат")
             .setView(dialogView)
             .setPositiveButton("Создать", null)
-            .setNegativeButton("Отмена") { _, _ ->
-                createChatDialog = null
-            }
+            .setNegativeButton("Отмена") { _, _ -> createChatDialog = null }
             .create()
 
         createChatDialog?.setOnShowListener { dlg ->
             val positive = (dlg as androidx.appcompat.app.AlertDialog)
                 .getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
-
             positive.setOnClickListener {
                 val name = nameInput.text?.toString()?.trim()
-
                 if (name.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "Введите название чата", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -114,6 +130,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
         createChatDialog?.show()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         createChatDialog?.dismiss()
