@@ -10,7 +10,7 @@ import com.example.polusmessenger.R
 import java.io.File
 
 data class SessionItem(
-    val file: File?,        // null = текущая запись
+    val file: File?,
     val label: String,
     val subtitle: String
 )

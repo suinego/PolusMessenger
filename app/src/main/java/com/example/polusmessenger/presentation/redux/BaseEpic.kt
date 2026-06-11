@@ -110,9 +110,7 @@ class CreateChatEpic(
                 flow {
                     try {
                         val allChats = createChat(action.name)
-                        //обновляем весь список чатов с сервера
                         emit(AppAction.ChatsLoaded(allChats, allChats.size))
-                        //выбираем последний (новый) чат
                         val newChat = allChats.lastOrNull()
                         if (newChat != null) {
                             emit(AppAction.SelectChat(newChat.id))

@@ -2,7 +2,6 @@ package com.example.scanview.data
 
 import android.graphics.Rect
 
-//дерево состояния View, захваченного в момент взаимодействия
 data class ViewNode(
     val className: String,
     val bounds: Rect,
@@ -13,13 +12,11 @@ data class ViewNode(
     val children: List<ViewNode>
 )
 
-//состояние фона — только сериализуемые примитивы, Drawable не храним
 sealed class BackgroundState {
     data class Color(val color: Int) : BackgroundState()
     data class Unknown(val drawableClass: String) : BackgroundState()
 }
 
-//наполнение View
 sealed class ViewContent {
     data class Text(
         val text: String,

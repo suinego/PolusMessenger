@@ -12,7 +12,6 @@ import com.example.scanview.data.InteractionRecord
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class InteractionAdapter(
     private var interactions: List<InteractionRecord>,
     private val onClick: ((InteractionRecord) -> Unit)? = null
@@ -39,17 +38,15 @@ class InteractionAdapter(
 
         val typeColor = gestureColor(gesture.type)
         holder.accentBar.setBackgroundColor(typeColor)
-        
-        // Линия 1: Название экрана (подсвечиваем цветом жеста или оставляем белым, но делаем главным)
-        holder.tvLine1.text = record.screenName
-        holder.tvLine1.setTextColor(Color.WHITE) // Оставляем белый для читаемости
 
-        // Линия 2: Номер, тип жеста, имя View и время
+        holder.tvLine1.text = record.screenName
+        holder.tvLine1.setTextColor(Color.WHITE)
+
         val viewLabel = viewInfo.idName ?: viewInfo.className
         val time = timeFmt.format(Date(record.timestamp))
-        
+
         holder.tvLine2.text = "${position + 1}. ${gesture.type.name} на $viewLabel\n($time)"
-        holder.tvLine2.setTextColor(typeColor) // Подсвечиваем вторую строку цветом жеста для акцента
+        holder.tvLine2.setTextColor(typeColor)
 
         holder.itemView.setOnClickListener { onClick?.invoke(record) }
     }

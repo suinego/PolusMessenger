@@ -39,7 +39,6 @@
         android:layout_height="1dp"
         android:background="#1A1A2E" />
 
-    <!-- ── Панель экспериментов ── -->
     <LinearLayout
         android:id="@+id/experimentPanel"
         android:layout_width="match_parent"
@@ -112,7 +111,6 @@
         android:layout_height="1dp"
         android:background="#1A1A2E" />
 
-    <!-- ── Пустое состояние ── -->
     <TextView
         android:id="@+id/tvNoSessions"
         android:layout_width="match_parent"
@@ -125,7 +123,6 @@
         android:lineSpacingMultiplier="1.5"
         android:visibility="gone" />
 
-    <!-- ── Список сессий (ScrollView → LinearLayout) ── -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -1,15 +1,11 @@
 [
     {
-        "merged": "com.example.polusmessenger.app-mergeDebugResources-57:/layout/fragment_profile.xml",
-        "source": "com.example.polusmessenger.app-main-60:/layout/fragment_profile.xml"
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-mergeDebugResources-57:/layout/activity_scan_demo.xml",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/activity_scan_demo.xml"
     },
     {
         "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-mergeDebugResources-57:/layout/item_chat.xml",
         "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/item_chat.xml"
-    },
-    {
-        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-mergeDebugResources-57:/layout/activity_scan_demo.xml",
-        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/activity_scan_demo.xml"
     },
     {
         "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-mergeDebugResources-57:/layout/item_session_file.xml",
@@ -42,6 +38,10 @@
     {
         "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-mergeDebugResources-57:/layout/dialog_create_chat.xml",
         "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/dialog_create_chat.xml"
+    },
+    {
+        "merged": "com.example.polusmessenger.app-mergeDebugResources-57:/layout/fragment_scan_results.xml",
+        "source": "com.example.polusmessenger.app-main-60:/layout/fragment_scan_results.xml"
     },
     {
         "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-mergeDebugResources-57:/layout/fragment_profile.xml",

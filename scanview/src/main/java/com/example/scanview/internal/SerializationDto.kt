@@ -12,13 +12,13 @@ data class BoundsDto(
 )
 
 data class BackgroundStateDto(
-    val type: String,           // "color" | "unknown"
+    val type: String,
     val color: Int? = null,
     val drawableClass: String? = null
 )
 
 data class ViewContentDto(
-    val type: String,           // "text" | "image_placeholder"
+    val type: String,
     val text: String? = null,
     val textColor: Int? = null,
     val textSizePx: Float? = null,
@@ -103,7 +103,6 @@ private fun TouchEvent.toDto() = TouchEventDto(
     timestamp = timestamp
 )
 
-// ---- десериализация DTO → domain ----
 
 internal fun TouchEventDto.toDomain() = TouchEvent(
     action = action, x = x, y = y, localX = localX, localY = localY, timestamp = timestamp
@@ -154,7 +153,6 @@ internal fun InteractionRecordDto.toDomain() = InteractionRecord(
     timestamp = timestamp
 )
 
-// ---- сериализация domain → DTO ----
 
 fun InteractionRecord.toDto(): InteractionRecordDto {
     val viewInfoDto = ViewInfoDto(

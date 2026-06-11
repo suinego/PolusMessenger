@@ -12,7 +12,7 @@ object ScanViewVisualizer {
     ): ScanViewOverlay {
         val overlay = ScanViewOverlay(parent.context)
         overlay.setInteractions(interactions, config)
-        
+
         parent.addView(
             overlay,
             ViewGroup.LayoutParams(
@@ -20,7 +20,7 @@ object ScanViewVisualizer {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
-        
+
         return overlay
     }
     fun detachOverlay(parent: ViewGroup, overlay: ScanViewOverlay) {

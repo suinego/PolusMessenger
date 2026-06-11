@@ -20,6 +20,11 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
+
+    // Тесты библиотеки не нужны — все инструментальные тесты в модуле :app
+    testOptions {
+        unitTests.all { it.enabled = false }
+    }
 }
 
 kotlin {

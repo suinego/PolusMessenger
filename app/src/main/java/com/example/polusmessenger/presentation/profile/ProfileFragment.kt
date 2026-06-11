@@ -48,8 +48,6 @@ class ProfileFragment : Fragment() {
         updateExperimentStatus()
     }
 
-    // ── Эксперименты ─────────────────────────────────────────────────────────
-
     private lateinit var tvExperimentStatus: TextView
 
     private fun setupExperiments(view: View) {
@@ -84,8 +82,6 @@ class ProfileFragment : Fragment() {
         )
     }
 
-    // ── Сохранение ──────────────────────────────────────────────────────────
-
     private fun saveCurrentSession() {
         val manager = (requireActivity() as? MainActivity)?.scanViewManager ?: return
         val history = manager.getHistory()
@@ -105,8 +101,6 @@ class ProfileFragment : Fragment() {
             Toast.makeText(requireContext(), "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
-    // ── Обновление списка ────────────────────────────────────────────────────
 
     private fun refreshData() {
         val files = savedFiles()
@@ -141,8 +135,6 @@ class ProfileFragment : Fragment() {
 
         return view
     }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private fun parseDisplayDate(name: String): String =
         runCatching {

@@ -26,7 +26,6 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private lateinit var edit: EditText
     private lateinit var sendBtn: Button
 
-    //вызываем после onCreateView!
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycler = view.findViewById(R.id.recyclerMessages)
@@ -58,7 +57,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
 
     private fun observeViewState() {
         viewLifecycleOwner.lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.CREATED){  //когда достиг состояния created
+            repeatOnLifecycle(Lifecycle.State.CREATED){
                 store.states.collect {
                     state ->
                     val chatId = state.selectedChatId

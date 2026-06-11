@@ -27,10 +27,9 @@ class ScanViewOverlay @JvmOverloads constructor(
         invalidate()
     }
 
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        
+
         drawable?.let { drawable ->
             drawable.setBounds(0, 0, width, height)
             drawable.draw(canvas)

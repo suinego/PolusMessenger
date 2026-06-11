@@ -1,56 +1,64 @@
 # ScanView
 
-> Android library for **recording**, **serializing**, and **reconstructing** user interaction sessions — without screenshots or bitmaps.
+> Android-библиотека для **записи**, **сериализации** и **воспроизведения** сессий пользовательских взаимодействий без скриншотов и растровых снимков.
 
-ScanView intercepts touch events via `Window.Callback`, captures a structural snapshot of the touched View at the exact moment of interaction, classifies the gesture (TAP / SWIPE / LONG\_PRESS / MOVE), and saves everything to a portable JSON file that can later be replayed as a step-by-step visualization.
+ScanView перехватывает события касания через `Window.Callback`, снимает структурный снимок затронутой View в момент взаимодействия, классифицирует жест (TAP / SWIPE / LONG\_PRESS / MOVE) и сохраняет всё в переносимый JSON-файл, который позже можно воспроизвести как пошаговую визуализацию.
 
----
+## Демо
 
-## Features
-
-- **Zero-overhead capture** — records only when the user touches the screen, never on a timer
-- **Structural, not visual** — captures `ViewNode` trees (class names, bounds, text, backgrounds), not pixel bitmaps
-- **Gesture classification** — automatic TAP / SWIPE / LONG\_PRESS / MOVE detection
-- **Screen-aware** — each record knows which fragment/screen was active
-- **Portable JSON** — sessions can be saved, shared, and replayed on any device
-- **Built-in visualization** — `ScanViewVisualizationView` renders sessions step-by-step with a seek bar
-- **Diagnostics API** — FPS (FrameMetrics), widget resolution rate (Q1), timeline coverage (Q2), event overhead
+![Демонстрация работы ScanView](scanview/src/main/java/com/example/scanview/assets/screenrec.gif)
 
 ---
 
-## How It Works
+## Возможности
+
+- **Захват без накладных расходов** — запись происходит только при касании экрана, а не по таймеру
+- **Структура, а не картинка** — сохраняются деревья `ViewNode` (имена классов, границы, текст, фон), а не пиксельные растры
+- **Классификация жестов** — автоматическое определение TAP / SWIPE / LONG\_PRESS / MOVE
+- **Привязка к экрану** — каждая запись знает, какой фрагмент/экран был активен
+- **Переносимый JSON** — сессии можно сохранять, передавать и воспроизводить на любом устройстве
+- **Встроенная визуализация** — `ScanViewVisualizationView` отрисовывает сессию пошагово с ползунком перемотки
+- **API диагностики** — FPS (FrameMetrics), доля распознанных виджетов (Q1), покрытие таймлайна (Q2), накладные расходы на событие
+
+---
+
+## Архитектура
+
+![Архитектура ScanView](scanview/src/main/java/com/example/scanview/assets/arh.png)
+
+## Как это работает
 
 ```
-User touches screen
+Пользователь касается экрана
         │
         ▼
-Window.Callback.dispatchTouchEvent()   ← intercepts before the UI reacts
+Window.Callback.dispatchTouchEvent()   ← перехват до того, как UI отреагирует
         │
-        ├── ACTION_DOWN  → remember target View, start gesture buffer
-        ├── ACTION_MOVE  → append to buffer (sampled, max 8 points)
+        ├── ACTION_DOWN  → запомнить целевую View, начать буфер жеста
+        ├── ACTION_MOVE  → добавить в буфер (с прореживанием, максимум 8 точек)
         └── ACTION_UP    →
-                ├── classify gesture   TAP / SWIPE / LONG_PRESS / MOVE
-                ├── extract ViewNode   depth-limited tree snapshot
+                ├── классифицировать жест   TAP / SWIPE / LONG_PRESS / MOVE
+                ├── извлечь ViewNode   снимок дерева с ограничением глубины
                 └── history.add(InteractionRecord)
                               │
-                              └── serialize() → JSON file
+                              └── serialize() → JSON-файл
 ```
 
-The key design decision: **capture on interaction, not on a clock**. This means zero CPU usage between touches and data size proportional to the number of interactions, not session duration.
+Ключевое проектное решение: **захват по взаимодействию, а не по таймеру**. Это означает нулевую нагрузку на CPU между касаниями и объём данных, пропорциональный числу взаимодействий, а не длительности сессии.
 
 ---
 
-## Quick Start
+## Быстрый старт
 
-### 1. Add dependency
+### 1. Подключение зависимости
 
-ScanView is distributed as a Gradle module (source). Copy the `scanview/` directory into your project, then in `settings.gradle.kts`:
+ScanView поставляется как Gradle-модуль (исходники). Скопируйте каталог `scanview/` в свой проект, затем в `settings.gradle.kts`:
 
 ```kotlin
 include(":scanview")
 ```
 
-In your app's `build.gradle.kts`:
+В `build.gradle.kts` вашего приложения:
 
 ```kotlin
 dependencies {
@@ -58,7 +66,7 @@ dependencies {
 }
 ```
 
-### 2. Initialize in your Activity
+### 2. Инициализация в Activity
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -69,8 +77,8 @@ class MainActivity : AppCompatActivity() {
             override val rootViewProvider: () -> View? = { window.decorView.rootView }
             override val activityProvider: (() -> Activity) = { this@MainActivity }
             override val logger: ((String, String) -> Unit) = { tag, msg -> Log.d(tag, msg) }
-            //Not necessary but you can also
-            // Provide the current screen name for richer session data
+            // Необязательно, но можно также
+            // передавать имя текущего экрана для более информативных данных сессии
             override val screenNameProvider: (() -> String) = {
                 when (supportFragmentManager.findFragmentById(R.id.container)) {
                     is HomeFragment    -> "Home"
@@ -94,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-### 3. Save a session
+### 3. Сохранение сессии
 
 ```kotlin
 private fun saveSession() {
@@ -106,10 +114,9 @@ private fun saveSession() {
 }
 ```
 
-### 4. Load and visualize
+### 4. Загрузка и визуализация
 
 ```xml
-<!-- layout.xml -->
 <com.example.scanview.visualization.ScanViewVisualizationView
     android:id="@+id/visualizationView"
     android:layout_width="match_parent"
@@ -139,7 +146,7 @@ seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 })
 ```
 
-### 5. Interaction timeline list (optional)
+### 5. Список-таймлайн взаимодействий (опционально)
 
 ```kotlin
 val adapter = InteractionAdapter(history) { record ->
@@ -155,8 +162,7 @@ recyclerView.adapter = adapter
 
 ---
 
-
-## Data Model
+## Модель данных
 
 ### `InteractionRecord`
 
@@ -166,80 +172,80 @@ InteractionRecord
 ├── timestamp: Long             System.currentTimeMillis()
 ├── viewInfo: ViewInfo
 │   ├── className: String       "AppCompatButton"
-│   ├── idName: String?         "btnSend"  (null if view has no id)
-│   ├── bounds: Rect?           screen-absolute bounding box
-│   ├── text: String?           label text for TextView / Button
-│   └── viewNode: ViewNode?     structural snapshot (see below)
+│   ├── idName: String?         "btnSend"  (null, если у view нет id)
+│   ├── bounds: Rect?           ограничивающий прямоугольник в координатах экрана
+│   ├── text: String?           текст для TextView / Button
+│   └── viewNode: ViewNode?     структурный снимок (см. ниже)
 └── gesture: Gesture
     ├── type: GestureType       TAP | SWIPE | LONG_PRESS | MOVE
-    ├── startEvent: TouchEvent  x, y, timestamp at ACTION_DOWN
-    ├── endEvent: TouchEvent?   x, y, timestamp at ACTION_UP
-    └── moveEvents: List<TouchEvent>   sampled intermediate points
+    ├── startEvent: TouchEvent  x, y, timestamp в ACTION_DOWN
+    ├── endEvent: TouchEvent?   x, y, timestamp в ACTION_UP
+    └── moveEvents: List<TouchEvent>   прореженные промежуточные точки
 ```
 
-### Gesture classification rules
+### Правила классификации жестов
 
-| Gesture | Condition |
+| Жест | Условие |
 |---|---|
-| `TAP` | Duration ≤ 300 ms **and** distance < 20 dp |
-| `SWIPE` | Distance > 100 dp |
-| `LONG_PRESS` | Duration > 500 ms **and** distance < 20 dp |
-| `MOVE` | Anything else |
+| `TAP` | Длительность ≤ 300 мс **и** расстояние < 20 dp |
+| `SWIPE` | Расстояние > 100 dp |
+| `LONG_PRESS` | Длительность > 500 мс **и** расстояние < 20 dp |
+| `MOVE` | Всё остальное |
 
-### `ViewNode` — structural snapshot
+### `ViewNode` — структурный снимок
 
 ```
 ViewNode
 ├── className: String            "ConstraintLayout", "TextView" …
-├── bounds: Rect                 screen-absolute pixels
+├── bounds: Rect                 пиксели в координатах экрана
 ├── background: BackgroundState? Color(argb) | Unknown(drawableClass)
 ├── alpha: Float                 0.0 – 1.0
 ├── visibility: Int              View.VISIBLE = 0
 ├── content: ViewContent?        Text(text, color, size, bold)
 │                                ImagePlaceholder(tint)
-└── children: List<ViewNode>     up to maxViewNodeDepth levels
+└── children: List<ViewNode>     до maxViewNodeDepth уровней
 ```
 
-> **Why not bitmaps?** `Drawable` objects are not serializable. ScanView extracts only primitive values (color ints, strings, floats) from the View hierarchy — nothing that holds references to `Canvas`, `Paint`, or `Bitmap`.
+> **Почему не растры?** Объекты `Drawable` несериализуемы. ScanView извлекает только примитивные значения (цвета как int, строки, float) из иерархии View — ничего, что держит ссылки на `Canvas`, `Paint` или `Bitmap`.
 
 ---
 
-## Visualization
+## Визуализация
 
 ### `ScanViewVisualizationView`
 
-Renders one interaction at a time. No overlapping — the seek bar moves through steps discretely.
+Отрисовывает по одному взаимодействию за раз. Без наложений — ползунок дискретно перемещается по шагам.
 
 ```kotlin
-// Load data
+// Загрузка данных
 visualizationView.setInteractions(history, screenWidthPx, screenHeightPx)
 visualizationView.setInteractions(history, screenW, screenH, VisualizationConfig(tapPointRadius = 30f))
 
-// Seek
-visualizationView.setProgress(0f)          // first step
-visualizationView.setProgress(1f)          // last step
-visualizationView.goToStep(3, history.size) // jump to step index 3
+// Перемотка
+visualizationView.setProgress(0f)          // первый шаг
+visualizationView.setProgress(1f)          // последний шаг
+visualizationView.goToStep(3, history.size) // перейти к шагу с индексом 3
 ```
 
-**Visual elements:**
+**Визуальные элементы:**
 
-| Element | Description |
+| Элемент | Описание |
 |---|---|
-| Rounded rectangles | ViewNode tree of the touched view |
-| Ripple touch point | Concentric rings + colored center |
-| SWIPE trail | Growing gradient dots → arrowhead |
-| LONG\_PRESS rings | Pulsating concentric circles |
-| Top indicator | Story dots (≤18 steps) or progress bar |
-| Bottom panel | Screen name · step N/total · gesture type · target · elapsed time |
+| Скруглённые прямоугольники | Дерево ViewNode затронутой view |
+| Точка касания (ripple) | Концентрические кольца + цветной центр |
+| След SWIPE | Растущие градиентные точки → наконечник стрелки |
+| Кольца LONG\_PRESS | Пульсирующие концентрические окружности |
+| Верхний индикатор | Точки-шаги (≤18 шагов) или прогресс-бар |
+| Нижняя панель | Имя экрана · шаг N/всего · тип жеста · цель · прошедшее время |
 
-**Color coding:**
+**Цветовое кодирование:**
 
-| Gesture | Color |
+| Жест | Цвет |
 |---|---|
-| TAP | `#00E676` green |
-| SWIPE | `#FF6D00` orange |
-| LONG\_PRESS | `#D500F5` purple |
-| MOVE | `#00B0FF` blue |
+| TAP | `#00E676` зелёный |
+| SWIPE | `#FF6D00` оранжевый |
+| LONG\_PRESS | `#D500F5` фиолетовый |
+| MOVE | `#00B0FF` синий |
 
 ### `VisualizationConfig`
 
@@ -253,7 +259,7 @@ data class VisualizationConfig(
 
 ---
 
-## JSON Format
+## Формат JSON
 
 ```json
 {
@@ -288,7 +294,7 @@ data class VisualizationConfig(
         "type": "TAP",
         "startEvent": { "action": "ACTION_DOWN", "x": 910.0, "y": 1770.0, "localX": 90.0, "localY": 40.0, "timestamp": 1715000000000 },
         "endEvent":   { "action": "ACTION_UP",   "x": 910.0, "y": 1770.0, "localX": 90.0, "localY": 40.0, "timestamp": 1715000000120 },
-        "posledovatelnostMoveEvent": []
+        "moveEvents": []
       },
       "timestamp": 1715000000000
     }
@@ -299,12 +305,12 @@ data class VisualizationConfig(
 
 ---
 
-## Diagnostics API
+## API диагностики
 
-For research and performance evaluation (thesis metrics M3, Q1, Q2):
+Для исследований и оценки производительности (метрики диплома M3, Q1, Q2):
 
 ```kotlin
-// 1. Collect FrameMetrics during recording
+// 1. Собираем FrameMetrics во время записи
 private val frameDurations = mutableListOf<Double>()
 private val frameListener = Window.OnFrameMetricsAvailableListener { _, metrics, _ ->
     if (scanViewManager.isRecording())
@@ -323,8 +329,8 @@ override fun onPause() {
     scanViewManager.stopRecording()
     window.removeOnFrameMetricsAvailableListener(frameListener)
     scanViewManager.setFrameMetricsData(frameDurations.toList())
-    
-    // 2. Compute and log all metrics
+
+    // 2. Вычисляем и логируем все метрики
     val m = scanViewManager.computeDiagnostics()
     Log.d("M3", "avg %.1f ms  p95 %.1f ms  jank %d/%d frames"
         .format(m.avgFrameMs, m.p95FrameMs, m.jankFrameCount, m.totalFrameCount))
@@ -339,48 +345,48 @@ override fun onPause() {
 
 ### `DiagnosticMetrics`
 
-| Field | Metric | Description |
+| Поле | Метрика | Описание |
 |---|---|---|
-| `avgFrameMs` / `p95FrameMs` | M3 | Average and 95th-percentile frame duration (ms) |
-| `jankFrameCount` / `totalFrameCount` | M3 | Frames exceeding 16.6 ms budget |
-| `idNameResolutionRate` | Q1 | Fraction of interactions with a resolved `idName` (0.0–1.0) |
-| `resolvedIdCount` / `totalInteractions` | Q1 | Absolute counts |
-| `maxTimestampGapMs` / `avgTimestampGapMs` | Q2 | Max and average gap between interaction timestamps |
-| `avgEventHandlingUs` / `maxEventHandlingUs` | Overhead | Time spent in `dispatchTouchEvent` callback (microseconds) |
+| `avgFrameMs` / `p95FrameMs` | M3 | Среднее и 95-й перцентиль времени кадра (мс) |
+| `jankFrameCount` / `totalFrameCount` | M3 | Кадры, превысившие бюджет 16.6 мс |
+| `idNameResolutionRate` | Q1 | Доля взаимодействий с распознанным `idName` (0.0–1.0) |
+| `resolvedIdCount` / `totalInteractions` | Q1 | Абсолютные значения |
+| `maxTimestampGapMs` / `avgTimestampGapMs` | Q2 | Максимальный и средний промежуток между метками времени |
+| `avgEventHandlingUs` / `maxEventHandlingUs` | Overhead | Время в колбэке `dispatchTouchEvent` (микросекунды) |
 
 ---
 
-## API Reference
+## Справочник API
 
 ### `ScanViewManager`
 
-| Method | Returns | Description |
+| Метод | Возвращает | Описание |
 |---|---|---|
-| `startRecording()` | `Unit` | Install `Window.Callback` interceptor, clear history, begin capture |
-| `stopRecording()` | `Unit` | Restore original callback, stop capture |
-| `isRecording()` | `Boolean` | Whether capture is active |
-| `getHistory()` | `List<InteractionRecord>` | All captured interactions |
-| `getStatistics()` | `InteractionStatistics` | Aggregate counts by gesture type |
-| `serialize()` | `String` | Export to pretty-printed JSON |
-| `deserialize(json)` | `List<InteractionRecord>` | Import a saved session |
-| `clearHistory()` | `Unit` | Discard all captured interactions |
-| `findViewAt(view, x, y)` | `View?` | Deepest visible View at screen coordinates |
-| `captureViewNode(view, depth)` | `ViewNode?` | Extract ViewNode tree from any View |
-| `computeDiagnostics()` | `DiagnosticMetrics` | Compute M3/Q1/Q2 and event overhead |
-| `setFrameMetricsData(durations)` | `Unit` | Feed frame durations for M3 computation |
+| `startRecording()` | `Unit` | Установить перехватчик `Window.Callback`, очистить историю, начать захват |
+| `stopRecording()` | `Unit` | Восстановить исходный колбэк, остановить захват |
+| `isRecording()` | `Boolean` | Активен ли захват |
+| `getHistory()` | `List<InteractionRecord>` | Все захваченные взаимодействия |
+| `getStatistics()` | `InteractionStatistics` | Сводные счётчики по типам жестов |
+| `serialize()` | `String` | Экспорт в форматированный JSON |
+| `deserialize(json)` | `List<InteractionRecord>` | Импорт сохранённой сессии |
+| `clearHistory()` | `Unit` | Сбросить все захваченные взаимодействия |
+| `findViewAt(view, x, y)` | `View?` | Самая глубокая видимая View в экранных координатах |
+| `captureViewNode(view, depth)` | `ViewNode?` | Извлечь дерево ViewNode из любой View |
+| `computeDiagnostics()` | `DiagnosticMetrics` | Вычислить M3/Q1/Q2 и накладные расходы на событие |
+| `setFrameMetricsData(durations)` | `Unit` | Передать длительности кадров для вычисления M3 |
 
 ---
 
-## Requirements
+## Требования
 
-| | Value |
+| | Значение |
 |---|---|
 | Min SDK | 24 (Android 7.0) |
 | Compile / Target SDK | 36 |
 | Kotlin | 1.9+ |
 | Java | 21 |
 
-**Bundled dependencies** (no manual additions needed):
+**Встроенные зависимости** (добавлять вручную не нужно):
 - `com.google.code.gson:gson:2.10.1`
 - `org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3`
 - `androidx.recyclerview:recyclerview:1.3.2`
@@ -389,60 +395,87 @@ override fun onPause() {
 
 ---
 
-## Known Limitations
+## Известные ограничения
 
-| Limitation | Notes |
+| Ограничение | Примечание |
 |---|---|
-| Single-Activity | `Window.Callback` is per-Activity. Multi-Activity apps need one instance per Activity. |
-| Custom Views | Views that render only in `onDraw()` with no children/background produce a minimal `ViewNode` (className + bounds only). The touch event is still captured correctly. |
-| EditText privacy | Text content is captured. Consider masking sensitive fields for production use. |
-| Visibility filter | Only `View.VISIBLE` children are included in the `ViewNode` tree. |
-| Main thread | ViewNode extraction runs synchronously on the UI thread during touch handling. Measured overhead: < 2 ms per interaction on modern devices. |
+| Single-Activity | `Window.Callback` действует на уровне одной Activity. Для multi-Activity приложений нужен отдельный экземпляр на каждую Activity. |
+| Кастомные View | View, отрисовывающиеся только в `onDraw()` без детей и фона, дают минимальный `ViewNode` (только className + bounds). Само касание при этом фиксируется корректно. |
+| Приватность EditText | Содержимое текста захватывается. Для продакшена стоит маскировать чувствительные поля. |
+| Фильтр видимости | В дерево `ViewNode` включаются только дети с `View.VISIBLE`. |
+| Главный поток | Извлечение ViewNode выполняется синхронно в UI-потоке во время обработки касания. Измеренные накладные расходы: < 2 мс на взаимодействие на современных устройствах. |
 
 ---
 
-## Performance Benchmarks
+## Результаты замеров производительности
 
-Measured on **Pixel 7** (Android 17, Google Tensor G2, 8 GB RAM, 2400×1080).  
-Scenario: list scrolling + screen navigation, ~2 minutes.
+Измерено на **Pixel 7** (Android 17, Google Tensor G2, 8 ГБ RAM, 2400×1080).
+Сценарий: прокрутка списка + навигация по экранам, ~2 минуты.
 
-### Strategy comparison
+### Сравнение стратегий
 
-| Strategy | Description |
+| Стратегия | Описание |
 |---|---|
-| **S1 Bitmap** | Periodic `View.drawToBitmap()` at 2 fps |
-| **S2 ViewNode** | Periodic full ViewNode tree traversal at 2 fps |
-| **S3 ScanView** | This library — capture only on user interaction |
+| **S1 Bitmap** | Периодический `View.drawToBitmap()` на 2 fps |
+| **S2 ViewNode** | Периодический полный обход дерева ViewNode на 2 fps |
+| **S3 ScanView** | Эта библиотека — захват только по взаимодействию пользователя |
 
-### Results
+### Результаты
 
-| Metric | Baseline | S1 Bitmap | S2 ViewNode | **S3 ScanView** |
+| Метрика | Baseline | S1 Bitmap | S2 ViewNode | **S3 ScanView** |
 |---|---|---|---|---|
 | **M1 CPU max, %** | 7.3 | 28.4 | 8.9 | **10.5** |
 | **M1 CPU delta, pp** | — | +21.1 | +1.6 | **+3.2** |
-| **M4 Data, KB/min** | — | 14 262 | 122.6 | **55.6** |
+| **M4 Данные, КБ/мин** | — | 14 262 | 122.6 | **55.6** |
 | **M4 vs S3** | — | 256× | 2.2× | **1×** |
-| **M3 Avg frame, ms** | ~5.5 | ~11 ¹ | ~7 ¹ | **6.1** |
-| **M3 p95 frame, ms** | ~9 | ~52 ¹ | ~21 ¹ | **16.4** |
-| **M3 Jank frames** | ~1–2% | ~22% ¹ | ~9% ¹ | **4.9% (23/473)** |
-| **Q1 id resolution** | n/a | n/a | n/a | **83% (15/18)** |
-| **Event overhead avg** | n/a | n/a | n/a | **74.1 µs** |
-| **Event overhead max** | n/a | n/a | n/a | **1 243 µs** |
+| **M3 Среднее время кадра, мс** | ~5.5 | ~11 ¹ | ~7 ¹ | **6.1** |
+| **M3 p95 время кадра, мс** | ~9 | ~52 ¹ | ~21 ¹ | **16.4** |
+| **M3 Jank-кадры** | ~1–2% | ~22% ¹ | ~9% ¹ | **4.9% (23/473)** |
+| **Q1 распознавание id** | n/a | n/a | n/a | **83% (15/18)** |
+| **Overhead на событие, среднее** | n/a | n/a | n/a | **74.1 µs** |
+| **Overhead на событие, макс** | n/a | n/a | n/a | **1 243 µs** |
 
-> ¹ Estimated from CPU observations; not measured directly with FrameMetrics.
+> ¹ Оценка по наблюдениям за CPU; напрямую через FrameMetrics не измерялось.
 
-### Key findings
+### Графики
 
-**Data size (M4):** S3 generates **256× less data than S1** and **2.2× less than S2**.  
-S1 stores raw ARGB_8888 bitmaps (≈10 MB/frame uncompressed, ≈135 KB/frame as PNG); S3 stores only a structural snapshot at the moment of touch.
+**Объём записанных данных (M4).** Логарифмическая шкала: S1 Bitmap записывает в сотни раз больше, чем S2 и S3.
 
-**CPU overhead (M1):** S3 adds **+3.2 pp** over no-recording baseline.  
-S1 adds +21.1 pp — nearly 7× more than S3.
+![Объём записанных данных по стратегиям](scanview/src/main/java/com/example/scanview/assets/chart_data_volume.png)
 
-**Frame times (M3):** S3 average frame is **6.1 ms**, well within the 16.6 ms budget.  
-p95 = 16.4 ms — 95% of frames are jank-free throughout the session.
+**Производительность отрисовки (M3).** Средняя и p95 длительность кадра, доля джанк-кадров (9 сценариев × 5 прогонов, планки погрешности — 95% ДИ).
 
-**Widget identification (Q1):** **83%** of interactions resolve to a named resource ID (`idName`).  
-The 17% remainder are views without an explicit Android ID (programmatic or third-party).
+![Метрики производительности по стратегиям](scanview/src/main/java/com/example/scanview/assets/chart_frame_metrics.png)
 
-**Touch overhead:** Average **74 µs per MotionEvent** — imperceptible to users (perception threshold ≈ 10 ms).
+**Нагрузка на CPU (M1).** Средний и пиковый CPU по стратегиям.
+
+![CPU-нагрузка по стратегиям](scanview/src/main/java/com/example/scanview/assets/chart_cpu.png)
+
+<details>
+<summary>Детальные графики (по сценариям и во времени)</summary>
+
+Средняя длительность кадра в разрезе каждого сценария:
+
+![Среднее время отрисовки кадра по сценариям](scanview/src/main/java/com/example/scanview/assets/chart_frame_per_scenario.png)
+
+Динамика CPU во времени (усреднение по прогонам):
+
+![CPU во времени](scanview/src/main/java/com/example/scanview/assets/chart_cpu_timeline.png)
+
+</details>
+
+### Ключевые выводы
+
+**Объём данных (M4):** S3 генерирует **в 256× меньше данных, чем S1** и **в 2.2× меньше, чем S2**.
+S1 хранит сырые растры ARGB_8888 (≈10 МБ/кадр без сжатия, ≈135 КБ/кадр в PNG); S3 хранит только структурный снимок в момент касания.
+
+**Накладные расходы CPU (M1):** S3 добавляет **+3.2 pp** к базовой линии без записи.
+S1 добавляет +21.1 pp — почти в 7× больше, чем S3.
+
+**Время кадров (M3):** среднее время кадра S3 — **6.1 мс**, уверенно внутри бюджета 16.6 мс.
+p95 = 16.4 мс — 95% кадров без подёргиваний на протяжении всей сессии.
+
+**Идентификация виджетов (Q1):** **83%** взаимодействий разрешаются в именованный resource ID (`idName`).
+Оставшиеся 17% — это view без явного Android-id (программные или сторонние).
+
+**Накладные расходы на касание:** в среднем **74  на один MotionEvent** — незаметно для пользователя (порог восприятия ≈ 10 мс).

@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             override val activityProvider: (() -> android.app.Activity) = { this@MainActivity }
             override val logger: ((String, String) -> Unit) = { tag, msg -> Log.d(tag, msg) }
             override val screenNameProvider: (() -> String) = {
-                // Возвращаем читаемое имя текущего фрагмента
                 when (supportFragmentManager.findFragmentById(R.id.container)) {
                     is ChatListFragment -> "Чаты"
                     is ChatFragment -> "Переписка"
@@ -49,15 +48,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         })
     }
 
-    // Файл сессии, который нужно открыть в ResultsFragment при следующем onResume
     var pendingSessionFile: File? = null
 
-    /** Менеджер экспериментов S1/S2 для дипломной работы */
     val experimentManager by lazy {
         ExperimentManager(scanViewManager) { window.decorView }
     }
 
-    // M3: накапливаем длительности кадров во время записи
     private val frameDurationsMs = mutableListOf<Double>()
     private val frameListener = Window.OnFrameMetricsAvailableListener { _, metrics, _ ->
         if (scanViewManager.isRecording()) {
@@ -116,7 +112,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-    /** Открыть сохранённую сессию во вкладке Результаты */
     fun openSession(file: File) {
         pendingSessionFile = file
         bottomNav.selectedItemId = R.id.nav_results
@@ -150,7 +145,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         val durationMs = System.currentTimeMillis() - recordingStartMs
         val interactions = scanViewManager.getHistory().size
 
-        // Первая строчка всегда — чтобы знать что функция вызвалась
         Log.d("ScanView", "▼▼▼ METRICS (сессия ${durationMs / 1000} с, $interactions взаим-ий) ▼▼▼")
 
         runCatching {

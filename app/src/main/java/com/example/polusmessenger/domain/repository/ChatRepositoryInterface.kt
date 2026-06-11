@@ -3,7 +3,6 @@ package com.example.polusmessenger.domain.repository
 import com.example.polusmessenger.domain.Chat
 import com.example.polusmessenger.domain.Message
 
-
 interface ChatRepositoryInterface {
     suspend fun getChatsPage(limit: Int, offset: Int): Pair<List<Chat>, Int>
 

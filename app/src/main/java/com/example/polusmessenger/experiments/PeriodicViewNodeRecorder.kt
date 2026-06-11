@@ -6,11 +6,6 @@ import android.view.View
 import com.example.scanview.api.ScanViewManager
 import com.google.gson.GsonBuilder
 
-/**
- * S2 — стратегия периодического обхода ViewNode-дерева.
- * Раз в 500мс (2fps) захватывает полное ViewNode-дерево корневого View
- * и сериализует в JSON для измерения M4.
- */
 class PeriodicViewNodeRecorder(
     private val rootViewProvider: () -> View?,
     private val manager: ScanViewManager,

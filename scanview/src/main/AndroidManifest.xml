@@ -8,7 +8,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PolusMessenger">
-        
+
         <activity
             android:name="com.example.scanview.ui.ScanViewResultsActivity"
             android:exported="false"

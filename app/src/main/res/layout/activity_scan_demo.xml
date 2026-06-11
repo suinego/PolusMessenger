@@ -31,14 +31,12 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- Кастомная View — смайлик -->
         <com.example.polusmessenger.demo.CustomSmileyView
             android:id="@+id/smileyView"
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Кнопка -->
         <Button
             android:id="@+id/btnDemo"
             android:layout_width="wrap_content"
@@ -47,7 +45,6 @@
             android:backgroundTint="#6200EE"
             android:layout_marginBottom="16dp" />
 
-        <!-- TextView -->
         <TextView
             android:id="@+id/tvDemoLabel"
             android:layout_width="wrap_content"
@@ -59,7 +56,6 @@
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
-        <!-- EditText -->
         <EditText
             android:id="@+id/etDemoInput"
             android:layout_width="match_parent"
@@ -70,7 +66,6 @@
             android:backgroundTint="#444466"
             android:layout_marginBottom="32dp" />
 
-        <!-- ImageView-заглушка -->
         <ImageView
             android:id="@+id/ivDemoImage"
             android:layout_width="80dp"

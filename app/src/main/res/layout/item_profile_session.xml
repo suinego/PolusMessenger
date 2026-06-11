@@ -17,7 +17,6 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp">
 
-        <!-- Иконка файла -->
         <TextView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -26,7 +25,6 @@
             android:gravity="center"
             android:layout_marginEnd="12dp" />
 
-        <!-- Информация -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,7 +51,6 @@
 
         </LinearLayout>
 
-        <!-- Кнопка Открыть -->
         <TextView
             android:id="@+id/btnOpenSession"
             android:layout_width="wrap_content"
@@ -66,7 +63,6 @@
             android:layout_marginEnd="4dp"
             android:background="?attr/selectableItemBackground" />
 
-        <!-- Кнопка Удалить -->
         <ImageButton
             android:id="@+id/btnDeleteSession"
             android:layout_width="36dp"

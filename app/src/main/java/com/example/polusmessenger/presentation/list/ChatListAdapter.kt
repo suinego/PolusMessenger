@@ -46,7 +46,6 @@ class ChatListAdapter(private val onClick: (Chat) -> Unit) :
         holder.bind(getItem(position))
     }
 
-    // Палитра для аватаров — каждый чат получает свой цвет по ID
     private val avatarColors = listOf(
         "6200EE", "0077B6", "E63946", "2A9D8F", "E76F51", "457B9D", "6A4C93", "1B4332"
     )
@@ -65,7 +64,6 @@ class ChatListAdapter(private val onClick: (Chat) -> Unit) :
             tvName.text = chat.name
             tvSubtitle.text = "Чат #${chat.id}"
 
-            // Уникальный цвет по ID
             val bg = avatarColors[chat.id % avatarColors.size]
             val encodedName = URLEncoder.encode(chat.name.take(2), "UTF-8")
             val avatarUrl = "https://ui-avatars.com/api/?name=$encodedName&size=128&background=$bg&color=fff&bold=true"
@@ -75,7 +73,6 @@ class ChatListAdapter(private val onClick: (Chat) -> Unit) :
                 .placeholder(R.drawable.ic_chat_placeholder)
                 .into(ivAvatar)
 
-            // Точка — цвет зависит от чётности ID (имитирует разнообразие)
             val dotColors = listOf(0xFF6200EE, 0xFF00BFA5, 0xFFFF6D00, 0xFF2979FF)
             dot.background.setTint(dotColors[chat.id % dotColors.size].toInt())
         }

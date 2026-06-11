@@ -41,7 +41,6 @@ class CustomSmileyView @JvmOverloads constructor(
         val cy = height / 2f
         val radius = minOf(cx, cy) * 0.85f
 
-        //лицо
         canvas.drawCircle(cx, cy, radius, facePaint)
         canvas.drawCircle(cx, cy, radius, outlinePaint)
 
@@ -49,11 +48,9 @@ class CustomSmileyView @JvmOverloads constructor(
         val eyeOffsetX = radius * 0.3f
         val eyeOffsetY = radius * 0.25f
 
-        //глаза
         canvas.drawCircle(cx - eyeOffsetX, cy - eyeOffsetY, eyeRadius, featurePaint)
         canvas.drawCircle(cx + eyeOffsetX, cy - eyeOffsetY, eyeRadius, featurePaint)
 
-        //улыбка — дуга
         val smileRect = RectF(
             cx - radius * 0.5f,
             cy - radius * 0.1f,

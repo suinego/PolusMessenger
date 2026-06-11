@@ -18,13 +18,8 @@ internal object ViewNodeRenderer {
         textAlign = Paint.Align.CENTER
     }
 
-    /**
-     * Рисует дерево ViewNode.
-     * [borderColor] — цвет рамки (передаётся от типа жеста).
-     * [depth] — глубина вложенности; чем глубже, тем прозрачнее фон/рамка.
-     */
     fun draw(canvas: Canvas, node: ViewNode, borderColor: Int = Color.argb(200, 0, 191, 255), depth: Int = 0) {
-        if (node.visibility != 0) return   // VISIBLE == 0
+        if (node.visibility != 0) return
 
         val rect = RectF(
             node.bounds.left.toFloat(),
@@ -41,8 +36,6 @@ internal object ViewNodeRenderer {
         node.children.forEach { child -> draw(canvas, child, borderColor, depth + 1) }
     }
 
-    // ── Фон ──────────────────────────────────────────────────────────────────
-
     private fun drawBackground(canvas: Canvas, background: BackgroundState?, rect: RectF, depth: Int) {
         val baseAlpha = (200 - depth * 35).coerceIn(30, 200)
         fillPaint.color = when (background) {
@@ -57,8 +50,6 @@ internal object ViewNodeRenderer {
         canvas.drawRoundRect(rect, r, r, fillPaint)
     }
 
-    // ── Рамка ─────────────────────────────────────────────────────────────────
-
     private fun drawBorder(canvas: Canvas, rect: RectF, color: Int, depth: Int) {
         val alpha = (220 - depth * 40).coerceIn(50, 220)
         val strokeW = if (depth == 0) 3f else maxOf(1f, 2.5f - depth * 0.4f)
@@ -68,11 +59,8 @@ internal object ViewNodeRenderer {
         canvas.drawRoundRect(rect, r, r, strokePaint)
     }
 
-    // ── Контент ───────────────────────────────────────────────────────────────
-
     private fun drawContent(canvas: Canvas, content: ViewContent?, rect: RectF, depth: Int) {
         content ?: return
-        // Текст и иконки видны только до определённой глубины
         if (depth > 3) return
         when (content) {
             is ViewContent.Text -> drawText(canvas, content, rect)

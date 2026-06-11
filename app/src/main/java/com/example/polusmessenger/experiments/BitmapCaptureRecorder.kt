@@ -6,11 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 
-/**
- * S1 — стратегия Bitmap-захвата.
- * Периодически снимает растровую копию корневого View через View.draw().
- * Используется только для дипломного эксперимента (базовая линия M1–M4).
- */
 class BitmapCaptureRecorder(
     private val rootViewProvider: () -> View?,
     private val fps: Int = 2
@@ -19,19 +14,18 @@ class BitmapCaptureRecorder(
     private var running = false
     private var startTimeMs = 0L
 
-    // Накопительные метрики
     private var captureCount = 0
-    private var totalBitmapBytes = 0L      // суммарный размер сырых данных (ARGB_8888)
-    private var totalPngCompressedBytes = 0L // приближение к реальному сжатому размеру
+    private var totalBitmapBytes = 0L
+    private var totalPngCompressedBytes = 0L
     private val frameDurationsMs = mutableListOf<Double>()
 
     data class S1Metrics(
         val captureCount: Int,
         val durationMs: Long,
-        val rawBytesPerCapture: Long,       // среднее, ARGB_8888
+        val rawBytesPerCapture: Long,
         val totalRawMB: Double,
-        val estimatedCompressedKB: Double,  // данные при PNG-сжатии
-        val kbPerMin: Double                // M4 эквивалент
+        val estimatedCompressedKB: Double,
+        val kbPerMin: Double
     )
 
     fun start() {
@@ -85,7 +79,6 @@ class BitmapCaptureRecorder(
             totalBitmapBytes += bitmap.byteCount.toLong()
             captureCount++
 
-            // Оцениваем PNG-сжатие через фактическую компрессию в поток /dev/null
             val stream = CountingOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
             totalPngCompressedBytes += stream.bytesWritten
@@ -94,7 +87,6 @@ class BitmapCaptureRecorder(
         }
     }
 
-    /** OutputStream который только считает байты, не хранит. */
     private class CountingOutputStream : java.io.OutputStream() {
         var bytesWritten = 0L
         override fun write(b: Int) { bytesWritten++ }

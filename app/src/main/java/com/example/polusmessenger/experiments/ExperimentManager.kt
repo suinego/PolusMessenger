@@ -4,16 +4,6 @@ import android.util.Log
 import android.view.View
 import com.example.scanview.api.ScanViewManager
 
-/**
- * Управляет дипломными экспериментами S1/S2.
- * S3 (ScanView) всегда активен через ScanViewManager.
- *
- * Использование:
- *   val exp = ExperimentManager(scanViewManager) { window.decorView }
- *   exp.startS1()   // запустить bitmap-стратегию
- *   // ... пользователь взаимодействует ...
- *   exp.stopAndLog() // остановить и вывести метрики в Logcat
- */
 class ExperimentManager(
     private val manager: ScanViewManager,
     private val rootViewProvider: () -> View?

@@ -34,7 +34,6 @@ class ScanResultsFragment : Fragment() {
     private lateinit var interactionAdapter: InteractionAdapter
 
     private var currentHistory: List<InteractionRecord> = emptyList()
-    // null = текущая запись в памяти, файл = загруженная сессия
     var loadedFromFile: File? = null
 
     override fun onCreateView(
@@ -75,7 +74,6 @@ class ScanResultsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Если из Профиля открыли конкретный файл — загружаем его
         val pending = (requireActivity() as? MainActivity)?.pendingSessionFile
         if (pending != null) {
             loadedFromFile = pending
@@ -83,8 +81,6 @@ class ScanResultsFragment : Fragment() {
         }
         loadData()
     }
-
-    // ── Сохранение ────────────────────────────────────────────────────────────
 
     private fun saveCurrentSession() {
         val manager = (requireActivity() as? MainActivity)?.scanViewManager ?: return
@@ -103,8 +99,6 @@ class ScanResultsFragment : Fragment() {
         }
     }
 
-    // ── Список взаимодействий ─────────────────────────────────────────────────
-
     private fun setupInteractionList() {
         interactionAdapter = InteractionAdapter(emptyList()) { record ->
             val idx = currentHistory.indexOf(record)
@@ -120,8 +114,6 @@ class ScanResultsFragment : Fragment() {
         recyclerInteractions.adapter = interactionAdapter
     }
 
-    // ── Seekbar ───────────────────────────────────────────────────────────────
-
     private fun setupSeekBar() {
         seekBar.max = 1
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -136,8 +128,6 @@ class ScanResultsFragment : Fragment() {
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
     }
-
-    // ── Загрузка данных ───────────────────────────────────────────────────────
 
     private fun loadData() {
         val history: List<InteractionRecord> = if (loadedFromFile != null) {

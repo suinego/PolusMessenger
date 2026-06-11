@@ -58,7 +58,7 @@ class ScanViewResultsActivity : AppCompatActivity() {
             updateHeader(interaction.screenName)
             syncSeekBarWithInteraction(interaction)
         }
-        
+
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = adapter
 
@@ -71,10 +71,10 @@ class ScanViewResultsActivity : AppCompatActivity() {
 
     private fun syncSeekBarWithInteraction(interaction: InteractionRecord) {
         if (currentHistory.isEmpty()) return
-        
+
         var minT = Long.MAX_VALUE
         var maxT = Long.MIN_VALUE
-        
+
         for (record in currentHistory) {
             val start = record.gesture.startEvent.timestamp
             val endEvent = record.gesture.endEvent
@@ -82,7 +82,7 @@ class ScanViewResultsActivity : AppCompatActivity() {
             if (start < minT) minT = start
             if (end > maxT) maxT = end
         }
-        
+
         val total = maxT - minT
         if (total > 0) {
             val progress = (((interaction.gesture.startEvent.timestamp - minT).toFloat() / total.toFloat()) * 1000).toInt()
@@ -99,10 +99,10 @@ class ScanViewResultsActivity : AppCompatActivity() {
             visualizationContainer.setInteractions(currentHistory, screenW, screenH)
             visualizationContainer.visibility = View.VISIBLE
             seekBar.visibility = View.VISIBLE
-            
+
             val first = currentHistory[0]
             updateHeader(first.screenName)
-            
+
             visualizationContainer.post {
                 visualizationContainer.centerOn(first.gesture.startEvent.x, first.gesture.startEvent.y)
             }
@@ -146,7 +146,7 @@ class ScanViewResultsActivity : AppCompatActivity() {
 
     private fun updateHeaderAtProgress(progress: Float) {
         if (currentHistory.isEmpty()) return
-        
+
         var minT = Long.MAX_VALUE
         var maxT = Long.MIN_VALUE
         for (record in currentHistory) {
@@ -156,16 +156,16 @@ class ScanViewResultsActivity : AppCompatActivity() {
             if (start < minT) minT = start
             if (end > maxT) maxT = end
         }
-        
+
         val currentTime = minT + (progress * (maxT - minT).toFloat()).toLong()
-        
+
         var active: InteractionRecord? = null
         for (record in currentHistory) {
             if (record.gesture.startEvent.timestamp <= currentTime) {
                 active = record
             }
         }
-        
+
         if (active != null) {
             updateHeader(active.screenName)
         }

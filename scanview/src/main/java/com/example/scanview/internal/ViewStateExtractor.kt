@@ -13,8 +13,7 @@ import com.example.scanview.data.ViewNode
 
 internal object ViewStateExtractor {
 
-    // Ограничиваем глубину, чтобы JSON не раздувался, 
-    // но сохраняем структуру самой View и её ближайших детей.
+    // маленькая грубина но сохраняем структуру самой вьюшки и деток.
     fun extract(view: View, maxDepth: Int = 3): ViewNode {
         return extractRecursive(view, 0, maxDepth)
     }
