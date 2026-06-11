@@ -61,6 +61,7 @@ internal object ViewNodeRenderer {
 
     private fun drawContent(canvas: Canvas, content: ViewContent?, rect: RectF, depth: Int) {
         content ?: return
+        // Текст и иконки видны только до определённой глубины
         if (depth > 3) return
         when (content) {
             is ViewContent.Text -> drawText(canvas, content, rect)
