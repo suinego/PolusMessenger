@@ -6,7 +6,7 @@ ScanView перехватывает события касания через `Wi
 
 ## Демо
 
-![Демонстрация работы ScanView](scanview/src/main/java/com/example/scanview/assets/screenrec.gif)
+<img src="scanview/src/main/java/com/example/scanview/assets/demo.gif" alt="Демонстрация работы ScanView" width="220" />
 
 ---
 

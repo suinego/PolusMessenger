@@ -1,0 +1,10 @@
+# Принудительно считать исходники Kotlin
+*.kt   linguist-language=Kotlin
+*.kts  linguist-language=Kotlin
+
+# Убрать «шумные» файлы из подсчёта языков, чтобы Kotlin был основным
+*.xml      linguist-detectable=false
+*.ipynb    linguist-documentation
+*.sh       linguist-vendored
+gradlew    linguist-vendored
+gradlew.bat linguist-vendored
