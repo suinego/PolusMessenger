@@ -1,0 +1,86 @@
+[
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/menu_bottom_nav_menu.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_dialog_create_chat.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/dialog_create_chat.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_activity_main.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_item_chat.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/item_chat.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_fragment_chat_list.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/fragment_chat_list.xml"
+    },
+    {
+        "merged": "com.example.polusmessenger.app-debug-58:/layout_fragment_scan_results.xml.flat",
+        "source": "com.example.polusmessenger.app-main-60:/layout/fragment_scan_results.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_shape_dot.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/shape_dot.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_fragment_scan_demo.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/fragment_scan_demo.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_activity_scan_demo.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/activity_scan_demo.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_item_session_file.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/item_session_file.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_item_message.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/item_message.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_bg_send_button.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/bg_send_button.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_bg_bubble_contact.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/bg_bubble_contact.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_fragment_profile.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_fragment_scan_results.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/fragment_scan_results.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_item_profile_session.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/item_profile_session.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_bg_input_bar.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/bg_input_bar.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/layout_fragment_chat.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/layout/fragment_chat.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_bg_bubble_me.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/bg_bubble_me.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_send_button.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/send_button.xml"
+    },
+    {
+        "merged": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-debug-58:/drawable_ic_chat_placeholder.xml.flat",
+        "source": "/Users/smorozila/.gradle/daemon/9.3.1/com.example.polusmessenger.app-main-60:/drawable/ic_chat_placeholder.xml"
+    }
+]

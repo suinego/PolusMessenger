@@ -1,0 +1,19 @@
+<resources>
+
+    <color name="primary">#6200EE</color>
+    <color name="primary_dark">#3700B3</color>
+    <color name="accent">#BB86FC</color>
+
+    <color name="background">#0D0D1A</color>
+    <color name="surface">#12122A</color>
+    <color name="surface_light">#1A1A2E</color>
+
+    <color name="text_primary">#EDEDFF</color>
+    <color name="text_secondary">#9999BB</color>
+    <color name="text_hint">#555577</color>
+
+    <color name="bubble_me">#4A0E8F</color>
+    <color name="bubble_contact">#1E1E3A</color>
+    <color name="text_me">#FFFFFF</color>
+    <color name="text_contact">#DDDDEE</color>
+</resources>
