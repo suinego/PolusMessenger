@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="#0D0D1A">
 
-    <!-- ── Строка поиска ── -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +47,6 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- ── Список чатов ── -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -62,7 +60,6 @@
             android:paddingBottom="80dp"
             android:clipToPadding="false" />
 
-        <!-- FAB создания чата -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabCreateChat"
             android:layout_width="wrap_content"
